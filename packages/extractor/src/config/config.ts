@@ -1,14 +1,22 @@
 import { config } from 'dotenv';
 
-config();
+config(); 
+
+const asString = (arg: any): string => {
+    const res = process.env[arg]
+    if (!res) {
+        throw new Error(`env variable ${arg} is required`);
+    }
+    return res;
+}
 
 export const configuration = {
-    dsAPI: process.env.DS_API,
-    dsApiLogin: process.env.DS_API_LOGIN,
-    dsApiPasssword: process.env.DS_API_PWD,
+    dsAPI: asString('DS_API'),
+    dsApiLogin: asString('DS_API_LOGIN'),
+    dsApiPasssword: asString('DS_API_PASSWORD'),
 
-    kintoAPI: process.env.KINTO_API,
-    kintoLogin: process.env.KINTO_LOGIN,
-    kintoPassword: process.env.KINTO_PASSWORD,
+    kintoAPI: asString('KINTO_API'),
+    kintoLogin: asString('KINTO_LOGIN'),
+    kintoPassword: asString('KINTO_PASSWORD'),
 };
 

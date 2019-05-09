@@ -17,19 +17,8 @@ const alignedWithColorsAndTime = format.combine(
 const logger = createLogger({
   level: 'info',
 // tslint:disable-next-line: object-literal-sort-keys
-  format: format.combine(
-    format.timestamp({
-      format: 'YYYY-MM-DD HH:mm:ss'
-    }),
-    format.errors({ stack: true }),
-    format.splat(),
-    format.json()
-  ),
+  format: alignedWithColorsAndTime,
   transports: [
-    //
-    // - Write to all logs with level `info` and below to `combined.log`
-    // - Write all logs error (and below) to `error.log`.
-    //
     new transports.File({ filename: './logs/ds-collector-err.log', level: 'error' }),
     new transports.File({ filename: './logs/ds-collector.log' })
   ]

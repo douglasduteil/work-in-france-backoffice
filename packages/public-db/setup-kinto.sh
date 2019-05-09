@@ -14,7 +14,6 @@ curl -u admin:passw0rd  \
 
 # create the bucket `wif`
 
-
 curl -u admin:passw0rd  \
      -X POST http://localhost:8889/v1/buckets \
      -d '{"data": {"id": "wif_public"}}' \
@@ -37,7 +36,7 @@ curl -u admin:passw0rd  \
 
 curl -u admin:passw0rd  \
      -X PATCH http://localhost:8889/v1/buckets/wif_public/collections/validity_checks \
-     -d '{"permissions": {"write": ["/buckets/wif/groups/system"]}}' \
+     -d '{"permissions": {"write": ["/buckets/wif_public/groups/system"]}}' \
      -H 'Content-Type:application/json' 
 
 # anonymous user can READ collection `validity_checks`

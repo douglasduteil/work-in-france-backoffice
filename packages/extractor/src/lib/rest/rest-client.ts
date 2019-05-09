@@ -7,35 +7,37 @@ import { logger } from '../../util';
 
 export class RestClient {
     private client: rm.RestClient;
+    private api: string;
 
     constructor(api: string, token?: string, credential?: { login: string, password: string }) {
+        this.api = api;
         if (token) {
             const bearer = new handlers.BearerCredentialHandler(token);
             this.client = new rm.RestClient('http-client', api, [bearer], undefined);
         } else if (credential) {
             const credentialHandler = new handlers.BasicCredentialHandler(credential.login, credential.password);
-            this.client = new rm.RestClient('http-client', api, [credentialHandler], undefined);
+            this.client = new rm.RestClient('REST_CLIENT', undefined, [credentialHandler], undefined);
         } else {
             throw new Error("[RestClient] credential or token are required");
         }
     }
 
     public get<T>(url: string): Observable<T> {
-        return from(this.client.get<any>(url)).pipe(
+        return from(this.client.get<any>(this.buildResourcePath(url))).pipe(
             map(this.handleResult),
             catchError(this.handleError)
         );
     }
 
     public create<T>(url: string, data: any): Observable<T> {
-        return from(this.client.create<any>(url, data)).pipe(
+        return from(this.client.create<any>(this.buildResourcePath(url), data)).pipe(
             map(this.handleResult),
             catchError(this.handleError)
         );
     }
 
     public update<T>(url: string, data: any): Observable<T> {
-        return from(this.client.update<any>(url, data)).pipe(
+        return from(this.client.update<any>(this.buildResourcePath(url), data)).pipe(
             map(this.handleResult),
             catchError(this.handleError),
         );
@@ -53,4 +55,9 @@ export class RestClient {
         throw Error(`[RestClient] http status ${res.statusCode}`);
     }
 
+    private buildResourcePath(url: string) {
+        const resourcePath = `${this.api}/${url}`;
+        logger.info(`[rest-client] resource path ${resourcePath}`)
+        return resourcePath;
+    }
 }

@@ -17,6 +17,23 @@ export interface DSDossier {
 
 }
 
+export interface DossierRecord {
+    id?: string;
+    ds_key: string;
+    ds_data: DSDossier;
+    metadata: {
+        state: string;
+        procedure_id: string;
+        created_at: number;
+        // date de la dernière modification du dossier
+        updated_at: number | null;
+        // date du passage en instruction
+        received_at: number | null;
+        // date de décision du dossier
+        processed_at: number | null;
+    }
+}
+
 export const getFieldValue = (champs: DSChamp[], libelle: string) => {
     const field = champs.find(f => f.type_de_champ.libelle === libelle);
     if (!field) {
@@ -31,7 +48,13 @@ export const getPublicFieldValue = (dossier: DSDossier, libelle: string) =>
 export const getPrivateFieldValue = (dossier: DSDossier, libelle: string) =>
     getFieldValue(dossier.champs_private, libelle);
 
-export const hasExpired = (doc: any) => {
+export const hasExpired = (doc: any): boolean => {
     const endDate = getPrivateFieldValue(doc, "Date de fin APT");
-    return endDate && new Date(endDate) < new Date();
+    if (!endDate) {
+        return true;
+    }
+    if (new Date(endDate) < new Date()) {
+        return true;
+    }
+    return false;
 };

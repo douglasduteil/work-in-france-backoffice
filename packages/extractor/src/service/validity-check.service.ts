@@ -1,11 +1,31 @@
-import { DSDossier, getPrivateFieldValue, getPublicFieldValue, hasExpired } from "../model";
-import { obfuscate } from "../util";
+import { Observable } from "rxjs";
+import { mergeMap } from "rxjs/operators";
+import { DossierRecord, getPrivateFieldValue, getPublicFieldValue, hasExpired, ValidityCheck } from "../model";
+import { validityCheckRepository } from "../repository";
+import { logger, obfuscate } from "../util";
 
 class ValidityCheckService {
 
-    public buildValidityChecks(dossier: DSDossier) {
+    public saveOrUpdate(validityCheck: ValidityCheck): Observable<ValidityCheck> {
+        return validityCheckRepository.findByDSKey(validityCheck.ds_key).pipe(
+            mergeMap((res: ValidityCheck[]) => {
+                if (res.length === 0) {
+                    logger.debug(`[ValidityCheckService.saveOrUpdate] add validity check for ds_key ${validityCheck.ds_key}`)
+                    return validityCheckRepository.add(validityCheck);
+                } else {
+                    const record: ValidityCheck = res[0];
+                    logger.debug(`[ValidityCheckService.saveOrUpdate] update validity check with ds_key ${validityCheck.ds_key}`)
+                    Object.assign(record, validityCheck);
+                    return validityCheckRepository.update(record.id || '', record);
+                }
+            })
+        )
+    }
+
+    public buildValidityChecks(record: DossierRecord): ValidityCheck {
+        const dossier = record.ds_data;
         return {
-            ds_id: dossier.id,
+            ds_key: record.ds_key,
             siret: dossier.etablissement.siret,
             // tslint:disable-next-line: object-literal-sort-keys
             prenom: obfuscate(getPublicFieldValue(dossier, "Prénom")),
@@ -16,7 +36,6 @@ class ValidityCheckService {
             date_de_fin_apt: getPrivateFieldValue(dossier, "Date de fin APT")
         };
     }
-
 }
 
 

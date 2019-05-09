@@ -1,5 +1,7 @@
-export interface ValidityCheck {
-    ds_id: number;
+import { IIdentifiable } from "../util/persistence";
+
+export interface ValidityCheck extends IIdentifiable {
+    ds_key: string;
     siret: string;
     prenom: string;
     nom: string;
