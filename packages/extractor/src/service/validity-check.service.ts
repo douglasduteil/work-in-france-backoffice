@@ -3,7 +3,7 @@ import { obfuscate } from "../util";
 
 class ValidityCheckService {
 
-    public extractPublicData(dossier: DSDossier) {
+    public buildValidityChecks(dossier: DSDossier) {
         return {
             ds_id: dossier.id,
             siret: dossier.etablissement.siret,

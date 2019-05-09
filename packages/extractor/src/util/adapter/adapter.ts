@@ -4,3 +4,4 @@ export const obfuscate = (arg: string) =>
         .trim()
         .split("")
         .reduce((str, char, i) => str + (i === 1 || char === " " ? char : "*"), "");
+
