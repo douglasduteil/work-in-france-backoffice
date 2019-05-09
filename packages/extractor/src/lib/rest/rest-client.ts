@@ -57,7 +57,7 @@ export class RestClient {
 
     private buildResourcePath(url: string) {
         const resourcePath = `${this.api}/${url}`;
-        logger.info(`[rest-client] resource path ${resourcePath}`)
+        logger.debug(`[rest-client] resource path ${resourcePath}`)
         return resourcePath;
     }
 }
