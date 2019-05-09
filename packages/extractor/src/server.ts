@@ -2,15 +2,15 @@ import * as cors from '@koa/cors';
 import * as Koa from 'koa';
 import * as bodyParser from 'koa-bodyparser';
 import * as Router from 'koa-router';
+import { schedule } from 'node-cron';
+import { configuration } from './config';
 import { extractorService } from './extract.service';
-import { logger } from './util';
 
 const app = new Koa();
 
-extractorService.syncValidityChecks().subscribe({
-    complete: () => logger.info(`[ExtractorService.syncValidityChecks] completed`),
-    next: next => logger.info(`[ExtractorService.syncValidityChecks] check `, next)
-})
+schedule(configuration.cronValidityCheck, () => {
+    extractorService.syncValidityChecks();
+});
 
 app.use(bodyParser());
 app.use(cors());

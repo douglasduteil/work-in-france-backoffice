@@ -18,5 +18,7 @@ export const configuration = {
     kintoAPI: asString('KINTO_API'),
     kintoLogin: asString('KINTO_LOGIN'),
     kintoPassword: asString('KINTO_PASSWORD'),
+
+    cronValidityCheck: asString('CRON_VALIDITY_CHECK')
 };
 
