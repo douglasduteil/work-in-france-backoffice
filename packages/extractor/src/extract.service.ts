@@ -15,6 +15,7 @@ class ExtractorService {
             next: next => logger.info(`[ExtractorService.syncValidityChecks] check ${next.ds_key} synchronised`)
         })
     }
+
 }
 
 export const extractorService = new ExtractorService();

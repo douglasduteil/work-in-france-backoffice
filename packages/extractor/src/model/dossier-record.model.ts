@@ -1,3 +1,5 @@
+import { IIdentifiable } from "../util";
+
 export interface DSChamp {
     value: string;
     type_de_champ: {
@@ -17,8 +19,7 @@ export interface DSDossier {
 
 }
 
-export interface DossierRecord {
-    id?: string;
+export interface DossierRecord extends IIdentifiable {
     ds_key: string;
     ds_data: DSDossier;
     metadata: {
