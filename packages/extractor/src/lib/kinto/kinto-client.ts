@@ -6,6 +6,12 @@ interface KintoResult<T> {
     data: T;
 }
 
+export interface DeletedData {
+    id: string;
+    last_modifified: string;
+    deleted: boolean;
+}
+
 export interface KintoCollection<T> {
 
     add(record: T): Observable<T>;
@@ -15,6 +21,8 @@ export interface KintoCollection<T> {
     one(id: string): Observable<T>;
 
     all(): Observable<T[]>;
+
+    delete(filter: string): Observable<DeletedData[]>;
 
     search(filter: string): Observable<T[]>;
 }
@@ -38,6 +46,11 @@ class KintoClient {
             all: () => {
                 return this.client.get<KintoResult<T[]>>(`${collectionName}/records`).pipe(
                     map((res: KintoResult<T[]>) => res.data)
+                );
+            },
+            delete: (filter: string) => {
+                return this.client.delete<KintoResult<DeletedData[]>>(`${collectionName}/records?${filter}`).pipe(
+                    map((res: KintoResult<DeletedData[]>) => (res.data) ? res.data : []),
                 );
             },
             one: (recordId: string) => {

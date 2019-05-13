@@ -1,4 +1,10 @@
+import { differenceInDays } from "date-fns";
 import { IIdentifiable } from "../util";
+
+export interface DSGroup {
+    id: string,
+    label: string
+}
 
 export interface DSChamp {
     value: string;
@@ -25,6 +31,7 @@ export interface DossierRecord extends IIdentifiable {
     metadata: {
         state: string;
         procedure_id: string;
+        group: DSGroup;
         created_at: number;
         // date de la dernière modification du dossier
         updated_at: number | null;
@@ -59,3 +66,21 @@ export const hasExpired = (doc: any): boolean => {
     }
     return false;
 };
+
+export const isLong = (doc: DossierRecord) => {
+    const startDate = getPrivateFieldValue(doc.ds_data, "Date de fin APT");
+    if (!startDate) {
+        return false;
+    }
+    return (
+        differenceInDays(
+            new Date(startDate),
+            new Date(getPrivateFieldValue(doc.ds_data, "Date de début APT"))
+        ) > 90
+    );
+};
+
+export const isClosed = (dossier: DossierRecord) => dossier.metadata.state === "closed";
+export const isRefused = (dossier: DossierRecord) => dossier.metadata.state === "refused";
+export const isWithoutContinuation = (dossier: DossierRecord) => dossier.metadata.state === "without_continuation";
+export const getNationality = (dossier: DossierRecord) => getPublicFieldValue(dossier.ds_data, 'Nationalité');

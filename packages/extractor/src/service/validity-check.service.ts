@@ -2,23 +2,13 @@ import { Observable } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import { DossierRecord, getPrivateFieldValue, getPublicFieldValue, hasExpired, ValidityCheck } from "../model";
 import { validityCheckRepository } from "../repository";
-import { logger, obfuscate } from "../util";
+import { obfuscate } from "../util";
 
 class ValidityCheckService {
 
     public saveOrUpdate(validityCheck: ValidityCheck): Observable<ValidityCheck> {
-        return validityCheckRepository.findByDSKey(validityCheck.ds_key).pipe(
-            mergeMap((res: ValidityCheck[]) => {
-                if (res.length === 0) {
-                    logger.debug(`[ValidityCheckService.saveOrUpdate] add validity check for ds_key ${validityCheck.ds_key}`)
-                    return validityCheckRepository.add(validityCheck);
-                } else {
-                    const record: ValidityCheck = res[0];
-                    logger.debug(`[ValidityCheckService.saveOrUpdate] update validity check with ds_key ${validityCheck.ds_key}`)
-                    Object.assign(record, validityCheck);
-                    return validityCheckRepository.update(record.id || '', record);
-                }
-            })
+        return validityCheckRepository.deleteByDSKey(validityCheck.ds_key).pipe(
+            mergeMap(() => validityCheckRepository.add(validityCheck))
         )
     }
 

@@ -18,6 +18,10 @@ class DossierRecordRepository {
         return this.collection.all();
     };
 
+    public allByProcessedAtBetween(start: number, end: number): Observable<DossierRecord[]> {
+        return this.collection.search(`gt_metadata.processed_at=${start}&lt_metadata.processed_at=${end}`);
+    }
+
 }
 
 export const dossierRecordRepository = new DossierRecordRepository();
