@@ -1,17 +1,12 @@
 import { Observable } from "rxjs";
-import { configuration } from "../config";
-import { DeletedData, kintoClient, KintoCollection } from "../lib";
+import { DeletedData } from "../lib";
 import { MonthlyReport } from "../model/monthly-report.model";
+import { KintoRepository } from "./kinto.repository";
 
-class MonthlyReportRepository {
-
-    private collection: KintoCollection<MonthlyReport>;
+class MonthlyReportRepository extends KintoRepository<MonthlyReport> {
 
     constructor() {
-        const kintoAPI = configuration.kintoAPI || '';
-        const kintoLogin = configuration.kintoLogin || '';
-        const kintoPassword = configuration.kintoPassword || '';
-        this.collection = kintoClient(kintoAPI, kintoLogin, kintoPassword).collection<MonthlyReport>("monthly_reports")
+        super("monthly_reports");
     }
 
     public delete(year: number, month: number, groupId: string): Observable<DeletedData[]> {

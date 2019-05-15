@@ -34,5 +34,9 @@ export const configuration = {
     cronValidityCheck: asString('CRON_VALIDITY_CHECK'),
     // tslint:disable-next-line: object-literal-sort-keys
     cronMontlyReport: asString('CRON_MONTHLY_REPORT'),
+
+    alertMaxReceivedTimeInDays: asNumber(`ALERT_MAX_RECEIVED_TIME_IN_DAYS`),
+    alertMaxInitiatedTimeInDays: asNumber(`ALERT_MAX_INITIATED_TIME_IN_DAYS`),
+    alertDemarcheSimplifieeEmail: asString(`ALERT_DEMARCHE_SIMPLIFIEE_EMAIL`)
 };
 

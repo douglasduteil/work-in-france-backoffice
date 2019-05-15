@@ -19,11 +19,6 @@ schedule(configuration.cronMontlyReport, () => {
 app.use(bodyParser());
 app.use(cors());
 
-router.get(`/hello-world`, (ctx: Koa.Context) => {
-    ctx.status = 200;
-    ctx.body = 'Hello World!!'
-});
-
 app.use(router.routes());
 app.use(router.allowedMethods());
 

@@ -1,17 +1,12 @@
 import { Observable } from "rxjs";
-import { configuration } from "../config";
-import { DeletedData, kintoClient, KintoCollection } from "../lib";
+import { DeletedData } from "../lib";
 import { ValidityCheck } from "../model";
+import { KintoRepository } from "./kinto.repository";
 
-class ValidityCheckRepository {
-
-    private kintoAPI = configuration.kintoAPI;
-    private kintoLogin = configuration.kintoLogin;
-    private kintoPassword = configuration.kintoPassword;
-    private collection: KintoCollection<ValidityCheck>;
+class ValidityCheckRepository extends KintoRepository<ValidityCheck> {
 
     constructor() {
-        this.collection = kintoClient(this.kintoAPI, this.kintoLogin, this.kintoPassword).collection('validity_checks');
+        super('validity_checks');
     }
 
     public update(id: string, record: ValidityCheck): Observable<ValidityCheck> {

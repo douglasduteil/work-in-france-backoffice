@@ -1,17 +1,21 @@
 import { addMonths, getMonth, getYear, isBefore } from "date-fns";
 import { Observable, Observer, Subject } from "rxjs";
-import { concatMap, exhaustMap, flatMap, map, mergeMap } from "rxjs/operators";
+import { concatMap, exhaustMap, filter, flatMap, map, mergeMap } from "rxjs/operators";
+import { Alert } from "./model/alert.model";
 import { MonthlyReport } from "./model/monthly-report.model";
 import { dossierRecordService, validityCheckService } from "./service";
+import { alertService } from "./service/alert.service";
 import { monthlyreportService } from "./service/monthly-report.service";
 import { logger } from "./util";
 
 class ExtractorService {
 
     private syncAllMonthlyReports$ = new Subject();
+    private syncAllAlerts$ = new Subject();
 
     constructor() {
         this.initAllMonthlyReportSynchro();
+        this.initAllAlertsSynchro();
     }
 
     public syncValidityChecks() {
@@ -31,6 +35,10 @@ class ExtractorService {
         this.syncAllMonthlyReports$.next();
     }
 
+    public launchGlobalAlertSynchro() {
+        this.syncAllAlerts$.next();
+    }
+
     public syncMonthlyReportsForPreviousMonth() {
         const date = addMonths(new Date(), -1);
         const year = getYear(date);
@@ -47,12 +55,30 @@ class ExtractorService {
         );
     }
 
+    private allAlerts(): Observable<Alert> {
+        return dossierRecordService.all().pipe(
+            flatMap(x => x),
+            map(x => alertService.getAlert(x)),
+            filter(x => x.messages.length > 0),
+            mergeMap((alert: Alert) => alertService.saveOrUpdate(alert)),
+        )
+    }
+
     private initAllMonthlyReportSynchro() {
         this.syncAllMonthlyReports$.pipe(
             exhaustMap(_ => this.allMonthlyReports())
         ).subscribe({
             complete: () => logger.info(`[ExtractorService.syncMonthlyReports] completed`),
             next: (next: MonthlyReport) => logger.info(`[ExtractorService.syncMonthlyReports] report ${next.year}-${next.month} ${next.group.label} synchronised `)
+        });
+    }
+
+    private initAllAlertsSynchro() {
+        this.syncAllAlerts$.pipe(
+            exhaustMap(_ => this.allAlerts())
+        ).subscribe({
+            complete: () => logger.info(`[ExtractorService.syncAlerts] completed`),
+            next: (next: Alert) => logger.info(`[ExtractorService.syncAlerts] alert ${next.ds_key} created `)
         });
     }
 }

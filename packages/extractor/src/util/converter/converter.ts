@@ -11,3 +11,10 @@ export const asNumber = (args: string | undefined, defaultValue: number) => {
     }
     return Number.parseInt(args, 10)
 }
+
+export const asDate: (args: number | string | undefined | null) => Date | null = (args) => {
+    if (!args) {
+        return null;
+    }
+    return new Date(args);
+}

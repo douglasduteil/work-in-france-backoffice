@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
 import { mergeMap } from "rxjs/operators";
-import { DossierRecord, getPrivateFieldValue, getPublicFieldValue, hasExpired, ValidityCheck } from "../model";
+import { DossierRecord, getDateDebutAPTValue, getDateFinAPTValue, getDateNaissanceValue, getNomValue, getPrenomValue, hasExpired, ValidityCheck } from "../model";
 import { validityCheckRepository } from "../repository";
 import { obfuscate } from "../util";
 
@@ -13,17 +13,16 @@ class ValidityCheckService {
     }
 
     public buildValidityChecks(record: DossierRecord): ValidityCheck {
-        const dossier = record.ds_data;
         return {
             ds_key: record.ds_key,
-            siret: dossier.etablissement.siret,
+            siret: record.ds_data.etablissement.siret,
             // tslint:disable-next-line: object-literal-sort-keys
-            prenom: obfuscate(getPublicFieldValue(dossier, "Prénom")),
-            nom: obfuscate(getPublicFieldValue(dossier, "Nom")),
-            date_de_naissance: getPublicFieldValue(dossier, "Date de naissance"),
-            has_expired: hasExpired(dossier),
-            date_de_debut_apt: getPrivateFieldValue(dossier, "Date de début APT"),
-            date_de_fin_apt: getPrivateFieldValue(dossier, "Date de fin APT")
+            prenom: obfuscate(getPrenomValue(record)),
+            nom: obfuscate(getNomValue(record)),
+            date_de_naissance: getDateNaissanceValue(record),
+            has_expired: hasExpired(record),
+            date_de_debut_apt: getDateDebutAPTValue(record),
+            date_de_fin_apt: getDateFinAPTValue(record)
         };
     }
 }
