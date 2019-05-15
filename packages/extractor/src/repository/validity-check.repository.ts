@@ -22,7 +22,7 @@ class ValidityCheckRepository {
     }
 
     public deleteByDSKey(dsKey: string): Observable<DeletedData[]> {
-        return this.collection.delete(`ds_key=${dsKey}`);
+        return this.collection.delete(`ds_key="${dsKey}"`);
     }
 
 }
