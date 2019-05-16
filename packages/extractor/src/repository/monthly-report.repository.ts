@@ -17,6 +17,10 @@ class MonthlyReportRepository extends KintoRepository<MonthlyReport> {
         return this.collection.add(report);
     }
 
+    public all(): Observable<MonthlyReport[]> {
+        return this.collection.all();
+    }
+
 }
 
 export const monthlyReportRepository = new MonthlyReportRepository();

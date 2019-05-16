@@ -1,12 +1,21 @@
 import { getMonth, getYear } from "date-fns";
 import { Observable } from "rxjs";
-import { flatMap, map, mergeMap } from "rxjs/operators";
+import { flatMap, map, mergeMap, tap } from "rxjs/operators";
 import { DossierRecord, DSGroup, getNationality, isClosed, isLong, isRefused, isWithoutContinuation } from "../model";
 import { initReport, MonthlyReport } from "../model/monthly-report.model";
 import { monthlyReportRepository } from "../repository";
 import { dossierRecordService } from "./dossier-record.service";
+import { generateMonthlyReport } from "./monthly-report.excel";
 
 class MonthlyReportService {
+
+    public generateMonthlyReports() {
+        monthlyReportRepository.all().pipe(
+            flatMap(x => x),
+            tap((res) => generateMonthlyReport(res))
+        ).subscribe();
+    }
+
 
     public syncMonthlyReports(year: number, month: number): Observable<MonthlyReport> {
         return monthlyreportService.createMonthlyReports(year, month).pipe(

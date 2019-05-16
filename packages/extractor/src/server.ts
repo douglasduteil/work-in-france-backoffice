@@ -5,16 +5,21 @@ import { schedule } from 'node-cron';
 import { configuration } from './config';
 import { extractorService } from './extract.service';
 import { router } from './routes';
+import { monthlyreportService } from './service/monthly-report.service';
 
 const app = new Koa();
 
-schedule(configuration.cronValidityCheck, () => {
-    extractorService.syncValidityChecks();
-});
+if (configuration.validityCheckEnable) {
+    schedule(configuration.validityCheckCron, () => {
+        extractorService.syncValidityChecks();
+    });
+}
 
 schedule(configuration.cronMontlyReport, () => {
     extractorService.syncMonthlyReportsForPreviousMonth();
 });
+
+monthlyreportService.generateMonthlyReports();
 
 app.use(bodyParser());
 app.use(cors());

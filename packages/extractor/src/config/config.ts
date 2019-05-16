@@ -18,6 +18,14 @@ const asNumber = (arg: any): number => {
     return Number.parseInt(res, 10);
 }
 
+const asBoolean = (arg: any): boolean => {
+    const res = process.env[arg]
+    if (!res) {
+        throw new Error(`env variable ${arg} is required`);
+    }
+    return 'true' === arg ? true : false;
+}
+
 export const configuration = {
     dsAPI: asString('DS_API'),
     dsApiLogin: asString('DS_API_LOGIN'),
@@ -31,7 +39,9 @@ export const configuration = {
     // tslint:disable-next-line: object-literal-sort-keys
     apiPort: asNumber('API_PORT'),
 
-    cronValidityCheck: asString('CRON_VALIDITY_CHECK'),
+    validityCheckEnable: asBoolean('VALIDITY_CHECK_ENABLE'),
+    validityCheckCron: asString('VALIDITY_CHECK_CRON'),
+
     // tslint:disable-next-line: object-literal-sort-keys
     cronMontlyReport: asString('CRON_MONTHLY_REPORT'),
 
