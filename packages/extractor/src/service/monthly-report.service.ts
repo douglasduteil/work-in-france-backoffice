@@ -1,21 +1,38 @@
-import { getMonth, getYear } from "date-fns";
+import { format, getMonth, getYear } from "date-fns";
+import { createWriteStream } from 'fs';
 import { Observable } from "rxjs";
 import { flatMap, map, mergeMap, tap } from "rxjs/operators";
+import { Stream } from "stream";
 import { DossierRecord, DSGroup, getNationality, isClosed, isLong, isRefused, isWithoutContinuation } from "../model";
 import { initReport, MonthlyReport } from "../model/monthly-report.model";
 import { monthlyReportRepository } from "../repository";
+import { logger } from "../util";
 import { dossierRecordService } from "./dossier-record.service";
-import { generateMonthlyReport } from "./monthly-report.excel";
+import { writeMonthlyReport } from "./monthly-report.excel";
 
 class MonthlyReportService {
 
     public generateMonthlyReports() {
         monthlyReportRepository.all().pipe(
             flatMap(x => x),
-            tap((res) => generateMonthlyReport(res))
+            tap((report) => {
+                const monthDate = new Date(report.year, report.month, 1);
+                const monthNumber = format(monthDate, 'MM');
+                const file = `excel/WIF_${report.year}-${monthNumber}_ud${report.group.id}.xlsx`
+                const stream = createWriteStream(file);
+                writeMonthlyReport(report, stream);
+            })
         ).subscribe();
     }
 
+    public async writeMonthlyReport(year: number, month: number, groupId: string, stream: Stream) {
+        const reports: MonthlyReport[] = await monthlyReportRepository.find(year, month, groupId).toPromise();
+        logger.info(`[MonthlyReportService.writeMonthlyReport] ${reports.length} reports found for year: ${year}, month: ${month}, group: ${groupId}`)
+        if (reports.length === 0) {
+            return;
+        }
+        await writeMonthlyReport(reports[0], stream);
+    }
 
     public syncMonthlyReports(year: number, month: number): Observable<MonthlyReport> {
         return monthlyreportService.createMonthlyReports(year, month).pipe(

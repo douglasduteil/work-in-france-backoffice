@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { BorderStyle, Cell, Workbook, Worksheet } from "exceljs";
 import { MonthlyReport, MonthlyReportCounter } from "../model/monthly-report.model";
+import { Stream } from "stream";
 
 class ExcelBuilder {
 
@@ -27,7 +28,7 @@ class ExcelBuilder {
     }
 
     public addTitle(title: string) {
-        const cell = this.worksheet.getRow(2).getCell(2);
+        const cell = this.cell(2, 2);
         cell.value = title;
         cell.font = { size: 16, bold: true };
         this.alignCenter(cell);
@@ -36,10 +37,23 @@ class ExcelBuilder {
         this.worksheet.mergeCells(2, 2, 2, 10);
     }
 
-    public addData(row: number, col: number, data: any) {
+    public addData(row: number, col: number, data: any, headers?: string[]) {
+        if (headers) {
+            headers.forEach((header, index) => {
+                const cell = this.cell(row, col + index);
+                cell.value = header;
+                cell.font = { bold: true };
+                this.alignCenter(cell);
+            });
+            row = row + 1;
+        }
         Object.keys(data).forEach((label, index) => {
-            this.worksheet.getRow(row + index).getCell(col).value = label;
-            this.worksheet.getRow(row + index).getCell(col + 1).value = data[label];
+            const labelCell = this.cell(row + index, col);
+            const valueCell = this.cell(row + index, col + 1);
+            this.alignCenter(labelCell);
+            this.alignCenter(valueCell);
+            labelCell.value = label;
+            valueCell.value = data[label];
         })
     }
 
@@ -54,12 +68,16 @@ class ExcelBuilder {
             'Acceptées': report.count,
         });
 
-        const subTitleCell = this.worksheet.getRow(row + 4).getCell(col);
+        const subTitleCell = this.cell(row + 4, col);
         subTitleCell.value = 'Top 10 des nationalités les plus concernées';
         subTitleCell.font = { size: 12, bold: true, underline: true };
         this.worksheet.mergeCells(row + 4, col, row + 4, col + 3);
 
-        this.addData(row + 6, col, report.countries);
+        this.addData(row + 6, col, report.countries, ['Nationalité', 'Nombre']);
+    }
+
+    private cell(row: number, col: number) {
+        return this.worksheet.getCell(row, col);
     }
 
     private alignCenter(cell: Cell) {
@@ -77,7 +95,7 @@ class ExcelBuilder {
 
 }
 
-export const generateMonthlyReport = async (report: MonthlyReport) => {
+export const writeMonthlyReport = async (report: MonthlyReport, stream: Stream) => {
     const builder = new ExcelBuilder();
     const monthDate = new Date(report.year, report.month, 1);
     const monthNumber = format(monthDate, 'MM');
@@ -104,6 +122,7 @@ export const generateMonthlyReport = async (report: MonthlyReport) => {
     builder.addAPT("APT + 3mois", 10, 2, report.accepted.more3Months);
     builder.addAPT("APT - 3mois", 10, 7, report.accepted.less3Months);
 
-    await builder.workbook.xlsx.writeFile(`excel/WIF_${report.year}-${monthNumber}_ud${report.group.id}.xlsx`);
+    // await builder.workbook.xlsx.writeFile(`excel/WIF_${report.year}-${monthNumber}_ud${report.group.id}.xlsx`);
+    await builder.workbook.xlsx.write(stream);
 
 }

@@ -21,6 +21,10 @@ class MonthlyReportRepository extends KintoRepository<MonthlyReport> {
         return this.collection.all();
     }
 
+    public find(year: number, month: number, groupId: string): Observable<MonthlyReport[]> {
+        return this.collection.search(`year=${year}&month=${month}&group.id="${groupId}"`);
+    }
+
 }
 
 export const monthlyReportRepository = new MonthlyReportRepository();
