@@ -89,7 +89,7 @@ export const getDateDebutInstruction = (doc: DossierRecord) => asDate(doc.metada
 export const getDateDebutConstruction = (doc: DossierRecord) => asDate(doc.metadata.initiated_at);
 
 export const isLong = (doc: DossierRecord) => {
-    const startDate = getDateFinAPT(doc);
+    const startDate = getDateDebutAPT(doc);
     const endDate = getDateFinAPT(doc);
     if (!startDate || !endDate) {
         return false;

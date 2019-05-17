@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { BorderStyle, Cell, Workbook, Worksheet } from "exceljs";
-import { MonthlyReport, MonthlyReportCounter } from "../model/monthly-report.model";
 import { Stream } from "stream";
+import { MonthlyReport, MonthlyReportCounter } from "../model/monthly-report.model";
 
 class ExcelBuilder {
 
@@ -73,7 +73,18 @@ class ExcelBuilder {
         subTitleCell.font = { size: 12, bold: true, underline: true };
         this.worksheet.mergeCells(row + 4, col, row + 4, col + 3);
 
-        this.addData(row + 6, col, report.countries, ['Nationalité', 'Nombre']);
+        const keys = Object.keys(report.countries).sort((a, b) => report.countries[b] - report.countries[a])
+        const countries = report.countries;
+
+        const countriesData: any = {};
+
+        keys.forEach(key => {
+            if (Object.keys(countriesData).length <= 10) {
+                countriesData[key] = countries[key];
+            }
+        });
+
+        this.addData(row + 6, col, countriesData, ['Nationalité', 'Nombre']);
     }
 
     private cell(row: number, col: number) {
@@ -114,7 +125,7 @@ export const writeMonthlyReport = async (report: MonthlyReport, stream: Stream) 
     });
 
     builder.addData(4, 7, {
-        'APT acceptées': report.accepted.more3Months.count + report.accepted.more3Months.count,
+        'APT acceptées': report.accepted.less3Months.count + report.accepted.more3Months.count,
         'APT refusées': report.refused.count,
         'APT sans suite': report.withoutContinuation.count
     });

@@ -98,7 +98,6 @@ const buildReport = (year: number, month: number, group: DSGroup, dossiers: Doss
 const determineCounter = (dossier: DossierRecord, report: MonthlyReport) => {
     if (isClosed(dossier)) {
         return isLong(dossier) ? report.accepted.more3Months : report.accepted.less3Months;
-
     } else if (isRefused(dossier)) {
         return report.refused;
     } else if (isWithoutContinuation(dossier)) {
