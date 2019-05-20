@@ -62,8 +62,22 @@ const getFieldValue = (champs: DSChamp[], libelle: string) => {
     return field.value;
 };
 
-const getPublicFieldValue = (dossier: DSDossier, libelle: string) => getFieldValue(dossier.champs, libelle);
-const getPrivateFieldValue = (dossier: DSDossier, libelle: string) => getFieldValue(dossier.champs_private, libelle);
+const getPublicFieldValue = (record: DossierRecord, libelle: string) => {
+    try {
+        return getFieldValue(record.ds_data.champs, libelle);
+    } catch (err) {
+        logger.error(`public field ${libelle} not find for dossier ${record.ds_key}`);
+        throw err;
+    }
+};
+const getPrivateFieldValue = (record: DossierRecord, libelle: string) => {
+    try {
+        return getFieldValue(record.ds_data.champs_private, libelle)
+    } catch (err) {
+        logger.error(`private field ${libelle} not find for dossier ${record.ds_key}`);
+        throw err;
+    }
+};
 
 export const hasExpired = (dossier: DossierRecord): boolean => {
     const endDate = getDateFinAPT(dossier);
@@ -76,11 +90,11 @@ export const hasExpired = (dossier: DossierRecord): boolean => {
     return false;
 };
 
-export const getDateDebutAPTValue = (doc: DossierRecord) => getPrivateFieldValue(doc.ds_data, "Date de début APT");
-export const getDateFinAPTValue = (doc: DossierRecord) => getPrivateFieldValue(doc.ds_data, "Date de fin APT");
-export const getPrenomValue = (doc: DossierRecord) => getPublicFieldValue(doc.ds_data, "Prénom");
-export const getNomValue = (doc: DossierRecord) => getPublicFieldValue(doc.ds_data, "Nom");
-export const getDateNaissanceValue = (doc: DossierRecord) => getPublicFieldValue(doc.ds_data, "Date de naissance");
+export const getDateDebutAPTValue = (doc: DossierRecord) => getPrivateFieldValue(doc, "Date de début APT");
+export const getDateFinAPTValue = (doc: DossierRecord) => getPrivateFieldValue(doc, "Date de fin APT");
+export const getPrenomValue = (doc: DossierRecord) => getPublicFieldValue(doc, "Prénom");
+export const getNomValue = (doc: DossierRecord) => getPublicFieldValue(doc, "Nom");
+export const getDateNaissanceValue = (doc: DossierRecord) => getPublicFieldValue(doc, "Date de naissance");
 
 export const getDateFinAPT = (dossier: DossierRecord) => asDate(getDateDebutAPTValue(dossier));
 export const getDateDebutAPT = (dossier: DossierRecord) => asDate(getDateFinAPTValue(dossier));

@@ -3,12 +3,17 @@ import { createWriteStream } from 'fs';
 import { Observable } from "rxjs";
 import { flatMap, map, mergeMap, tap } from "rxjs/operators";
 import { Stream } from "stream";
-import { DossierRecord, DSGroup, getNationality, isClosed, isLong, isRefused, isWithoutContinuation } from "../model";
+import { DossierRecord, getDemarcheSimplifieeUrl, getNationality, isClosed, isLong, isRefused, isWithoutContinuation } from "../model";
 import { initReport, MonthlyReport } from "../model/monthly-report.model";
 import { monthlyReportRepository } from "../repository";
 import { logger } from "../util";
 import { dossierRecordService } from "./dossier-record.service";
 import { writeMonthlyReport } from "./monthly-report.excel";
+
+interface GroupReport {
+    title: string;
+    dossiers: DossierRecord[];
+}
 
 class MonthlyReportService {
 
@@ -35,16 +40,11 @@ class MonthlyReportService {
     }
 
     public syncMonthlyReports(year: number, month: number): Observable<MonthlyReport> {
-        return monthlyreportService.createMonthlyReports(year, month).pipe(
-            mergeMap((report) => monthlyreportService.saveOrUpdate(report))
-        )
-    }
-
-    public createMonthlyReports(year: number, month: number): Observable<MonthlyReport> {
-        return dossierRecordService.allByMonth(year, month).pipe(
-            map(groupByGroup),
-            map(buildReports),
-            flatMap(x => x),
+        return this.getReportGroups(year, month).pipe(
+            mergeMap(groupReport => {
+                const report = buildReport(groupReport.dossiers);
+                return monthlyreportService.saveOrUpdate(report);
+            })
         )
     }
 
@@ -53,25 +53,33 @@ class MonthlyReportService {
             mergeMap(() => monthlyReportRepository.add(report))
         )
     }
+
+    private getReportGroups(year: number, month: number): Observable<GroupReport> {
+        return dossierRecordService.allByMonth(year, month).pipe(
+            map(groupByGroup),
+            map(splitGroups),
+            flatMap(x => x),
+        );
+    }
 }
 
 export const monthlyreportService = new MonthlyReportService();
 
-const buildReports = (dossiersByGroup: Map<string, DossierRecord[]>) => {
-    const reports: MonthlyReport[] = [];
-    dossiersByGroup.forEach((dossiers: DossierRecord[]) => {
-        if (dossiers.length === 0) {
-            return;
+const buildReport: (dossiers: DossierRecord[]) => MonthlyReport = (dossiers: DossierRecord[]) => {
+    const firstDossier = dossiers[0];
+    if (!firstDossier.metadata.processed_at) {
+        throw new Error(`[MonthlyReportService.buildReports] processed_at is not defined`);
+    }
+    const processedAt = new Date(firstDossier.metadata.processed_at);
+    const report = initReport(getYear(processedAt), getMonth(processedAt), firstDossier.metadata.group);
+    return dossiers.reduce((acc, dossier) => {
+        try {
+            return incrementReport(acc, dossier);
+        } catch (err) {
+            logger.error(`[MonthlyReportService.buildReport] error with dossier ${dossier.ds_key}`, err)
+            return acc;
         }
-        const firstDossier = dossiers[0];
-        if (!firstDossier.metadata.processed_at) {
-            throw new Error(`[MonthlyReportService.buildReports] processed_at is not defined`);
-        }
-        const processedAt = new Date(firstDossier.metadata.processed_at);
-        const report = buildReport(getYear(processedAt), getMonth(processedAt), firstDossier.metadata.group, dossiers);
-        reports.push(report)
-    });
-    return reports;
+    }, report);
 }
 
 const groupByGroup = (dossiers: DossierRecord[]) => {
@@ -88,11 +96,15 @@ const groupByGroup = (dossiers: DossierRecord[]) => {
     }, dossiersByGroup);
 }
 
-const buildReport = (year: number, month: number, group: DSGroup, dossiers: DossierRecord[]) => {
-    const report = initReport(year, month, group);
-    return dossiers.reduce((acc, dossier) => {
-        return incrementReport(acc, dossier);
-    }, report);
+const splitGroups = (groups: Map<string, DossierRecord[]>) => {
+    const result: GroupReport[] = [];
+    groups.forEach((dossiers: DossierRecord[], key: string) => {
+        result.push({
+            dossiers,
+            title: key
+        });
+    });
+    return result;
 }
 
 const determineCounter = (dossier: DossierRecord, report: MonthlyReport) => {
