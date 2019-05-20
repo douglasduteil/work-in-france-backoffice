@@ -1,5 +1,5 @@
 import { differenceInDays } from "date-fns";
-import { asDate, IIdentifiable } from "../util";
+import { asDate, IIdentifiable, logger } from "../util";
 
 export interface DSGroup {
     id: string,
@@ -30,7 +30,7 @@ export interface DSDossier {
     champs: DSChamp[];
     champs_private: DSChamp[];
     commentaires: DSCommentaire[];
-
+    instructeurs: string[];
 }
 
 export interface DossierRecord extends IIdentifiable {
@@ -50,6 +50,7 @@ export interface DossierRecord extends IIdentifiable {
         received_at: number | null;
         // date de décision du dossier
         processed_at: number | null;
+        instructors_history: string[];
     }
 }
 

@@ -6,4 +6,5 @@ export interface Alert extends IIdentifiable {
     url: string;
     group: DSGroup;
     messages: string[];
+    instructors_history: string[];
 }
