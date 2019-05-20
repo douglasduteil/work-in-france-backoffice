@@ -36,8 +36,14 @@ class AlertService {
         } else if (isInitiated(dossier)) {
             this.addAlert(alerts, dossier, isInitiatedTimeTooLong, 'Durée de construction de dossier dépassée');
         }
+
+        const keys = dossier.ds_key.split('-');
+        const procedureId = keys[0];
+        const dossierId = keys[1];
         const alert: Alert = {
             ds_key: dossier.ds_key,
+            url: `https://www.demarches-simplifiees.fr/procedures/${procedureId}/dossiers/${dossierId}`,
+            // tslint:disable-next-line: object-literal-sort-keys
             group: dossier.metadata.group,
             messages: alerts,
         }
