@@ -18,3 +18,13 @@ export const asDate: (args: number | string | undefined | null) => Date | null =
     }
     return new Date(args);
 }
+
+export const asString = (args: string[], separator: string) => {
+    if (!args) {
+        return '';
+    }
+    if (args.length === 0) {
+        return '';
+    }
+    return args.join(separator);
+}

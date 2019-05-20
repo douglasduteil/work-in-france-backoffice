@@ -9,6 +9,10 @@ class AlertRepository extends KintoRepository<Alert> {
         super("alerts")
     }
 
+    public all(): Observable<Alert[]> {
+        return this.collection.all();
+    }
+
     public add(alert: Alert): Observable<Alert> {
         return this.collection.add(alert);
     }

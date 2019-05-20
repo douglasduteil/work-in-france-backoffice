@@ -1,7 +1,8 @@
 import { format } from "date-fns";
-import { BorderStyle, Cell, Workbook, Worksheet } from "exceljs";
+import { Workbook, Worksheet } from "exceljs";
 import { Stream } from "stream";
 import { MonthlyReport, MonthlyReportCounter } from "../model/monthly-report.model";
+import { addBorder, alignCenter, createWorkbook, fontBold, fontTitle, fontTitle2 } from "./excel.util";
 
 class ExcelBuilder {
 
@@ -11,12 +12,8 @@ class ExcelBuilder {
     private colLeft = 2;
     private colRight = 7;
 
-    public createWorkbook() {
-        this.workbook = new Workbook();
-        this.workbook.creator = 'Work In France';
-        this.workbook.lastModifiedBy = 'Work In France';
-        this.workbook.created = new Date();
-        this.workbook.modified = new Date();
+    public initWorkbook() {
+        this.workbook = createWorkbook();
     }
 
     public createWorkSheet(title: string) {
@@ -29,10 +26,10 @@ class ExcelBuilder {
 
     public addTitle(title: string) {
         const cell = this.cell(2, 2);
+        fontTitle(cell);
+        alignCenter(cell);
+        addBorder(cell, 'double');
         cell.value = title;
-        cell.font = { size: 16, bold: true };
-        this.alignCenter(cell);
-        this.addBorder(cell, 'double');
 
         this.worksheet.mergeCells(2, 2, 2, 10);
     }
@@ -41,7 +38,7 @@ class ExcelBuilder {
         array.forEach((label, index) => {
             this.worksheet.mergeCells(row + index, col, row + index, col + 4);
             const cell = this.cell(row + index, col);
-            this.alignCenter(cell);
+            alignCenter(cell);
             cell.value = label;
         })
     }
@@ -50,17 +47,17 @@ class ExcelBuilder {
         if (headers) {
             headers.forEach((header, index) => {
                 const cell = this.cell(row, col + index);
+                fontBold(cell);
+                alignCenter(cell);
                 cell.value = header;
-                cell.font = { bold: true };
-                this.alignCenter(cell);
             });
             row = row + 1;
         }
         Object.keys(data).forEach((label, index) => {
             const labelCell = this.cell(row + index, col);
             const valueCell = this.cell(row + index, col + 1);
-            this.alignCenter(labelCell);
-            this.alignCenter(valueCell);
+            alignCenter(labelCell);
+            alignCenter(valueCell);
             labelCell.value = label;
             valueCell.value = data[label];
         })
@@ -70,8 +67,8 @@ class ExcelBuilder {
 
         const titleCell = this.worksheet.getRow(row).getCell(col);
         titleCell.value = title;
-        titleCell.font = { size: 14, bold: true };
-        this.addBorder(titleCell, 'thin');
+        fontTitle2(titleCell);
+        addBorder(titleCell, 'thin');
         this.worksheet.mergeCells(row, col, row, col + 3);
         this.addData(row + 2, col, {
             'Acceptées': report.count,
@@ -100,19 +97,6 @@ class ExcelBuilder {
         return this.worksheet.getCell(row, col);
     }
 
-    private alignCenter(cell: Cell) {
-        cell.alignment = { vertical: 'middle', horizontal: 'center' };
-    }
-    private addBorder(cell: Cell, style: BorderStyle) {
-        cell.border = {
-            top: { style },
-            // tslint:disable-next-line: object-literal-sort-keys
-            left: { style },
-            bottom: { style },
-            right: { style }
-        };
-    }
-
 }
 
 export const writeMonthlyReport = async (report: MonthlyReport, stream: Stream) => {
@@ -120,7 +104,7 @@ export const writeMonthlyReport = async (report: MonthlyReport, stream: Stream) 
     const monthDate = new Date(report.year, report.month, 1);
     const monthNumber = format(monthDate, 'MM');
 
-    builder.createWorkbook();
+    builder.initWorkbook();
     builder.createWorkSheet(`${report.year}-${monthNumber} - Synthèse`);
 
     // worksheet title
