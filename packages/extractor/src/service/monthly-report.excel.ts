@@ -37,6 +37,15 @@ class ExcelBuilder {
         this.worksheet.mergeCells(2, 2, 2, 10);
     }
 
+    public addDossierUrls(row: number, col: number, array: string[]) {
+        array.forEach((label, index) => {
+            this.worksheet.mergeCells(row + index, col, row + index, col + 4);
+            const cell = this.cell(row + index, col);
+            this.alignCenter(cell);
+            cell.value = label;
+        })
+    }
+
     public addData(row: number, col: number, data: any, headers?: string[]) {
         if (headers) {
             headers.forEach((header, index) => {
@@ -112,10 +121,10 @@ export const writeMonthlyReport = async (report: MonthlyReport, stream: Stream) 
     const monthNumber = format(monthDate, 'MM');
 
     builder.createWorkbook();
-    builder.createWorkSheet(`${report.group.label} - ${report.year}-${monthNumber}`);
+    builder.createWorkSheet(`${report.year}-${monthNumber} - Synthèse`);
 
     // worksheet title
-    builder.addTitle('Work In France:  Rapport Mensuel');
+    builder.addTitle('Rapport Mensuel - synthèse');
 
     builder.addData(4, 2, {
         'Année': `${report.year}`,
@@ -132,6 +141,13 @@ export const writeMonthlyReport = async (report: MonthlyReport, stream: Stream) 
 
     builder.addAPT("APT + 3mois", 10, 2, report.accepted.more3Months);
     builder.addAPT("APT - 3mois", 10, 7, report.accepted.less3Months);
+
+    if (report.refused.dossiers && report.refused.dossiers.length > 0) {
+        builder.createWorkSheet(`${report.year}-${monthNumber} - dossier refusés`);
+        builder.addTitle('Rapport Mensuel - dossiers refusés');
+
+        builder.addDossierUrls(4, 2, report.refused.dossiers);
+    }
 
     // await builder.workbook.xlsx.writeFile(`excel/WIF_${report.year}-${monthNumber}_ud${report.group.id}.xlsx`);
     await builder.workbook.xlsx.write(stream);

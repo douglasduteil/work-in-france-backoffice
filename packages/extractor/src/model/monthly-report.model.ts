@@ -5,7 +5,8 @@ export interface MonthlyReportCounter {
     count: number;
     countries: {
         [country: string]: number;
-    }
+    },
+    dossiers: string[];
 }
 
 export interface MonthlyReport extends IIdentifiable {
@@ -22,7 +23,8 @@ export interface MonthlyReport extends IIdentifiable {
 
 const initMonthlyReportCounter: () => MonthlyReportCounter = () => ({
     count: 0,
-    countries: {}
+    countries: {},
+    dossiers: []
 });
 
 export const initReport: (year: number, month: number, group: DSGroup) => MonthlyReport = (year: number, month: number, group: { id: string, label: string }) => {

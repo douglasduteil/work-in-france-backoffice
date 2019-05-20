@@ -125,6 +125,7 @@ const incrementReport = (report: MonthlyReport, dossier: DossierRecord) => {
     if (!counter.countries[nationality]) {
         counter.countries[nationality] = 0;
     }
+    counter.dossiers.push(getDemarcheSimplifieeUrl(dossier));
     counter.countries[nationality]++;
     return report;
 }

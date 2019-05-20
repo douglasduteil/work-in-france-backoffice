@@ -120,4 +120,11 @@ export const isClosed = (dossier: DossierRecord) => getState(dossier) === "close
 export const isRefused = (dossier: DossierRecord) => getState(dossier) === "refused";
 export const isWithoutContinuation = (dossier: DossierRecord) => getState(dossier) === "without_continuation";
 
-export const getNationality = (dossier: DossierRecord) => getPublicFieldValue(dossier.ds_data, 'Nationalité');
+export const getNationality = (dossier: DossierRecord) => getPublicFieldValue(dossier, 'Nationalité');
+
+export const getDemarcheSimplifieeUrl = (dossier: DossierRecord) => {
+    const keys = dossier.ds_key.split('-');
+    const procedureId = keys[0];
+    const dossierId = keys[1];
+    return `https://www.demarches-simplifiees.fr/procedures/${procedureId}/dossiers/${dossierId}`;
+}

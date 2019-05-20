@@ -2,7 +2,7 @@ import { differenceInDays, differenceInMonths } from "date-fns";
 import { Observable } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import { configuration } from "../config";
-import { DossierRecord, DSCommentaire, getDateDebutAPT, getDateDebutConstruction, getDateDebutInstruction, getDateFinAPT, isClosed, isInitiated, isReceived, isRefused, isWithoutContinuation } from "../model";
+import { DossierRecord, DSCommentaire, getDateDebutAPT, getDateDebutConstruction, getDateDebutInstruction, getDateFinAPT, getDemarcheSimplifieeUrl, isClosed, isInitiated, isReceived, isRefused, isWithoutContinuation } from "../model";
 import { Alert } from "../model/alert.model";
 import { alertRepository } from "../repository/alert.repository";
 
@@ -41,12 +41,9 @@ class AlertService {
             this.addAlert(alerts, dossier, isInitiatedTimeTooLong, 'Durée de construction de dossier dépassée');
         }
 
-        const keys = dossier.ds_key.split('-');
-        const procedureId = keys[0];
-        const dossierId = keys[1];
         const alert: Alert = {
             ds_key: dossier.ds_key,
-            url: `https://www.demarches-simplifiees.fr/procedures/${procedureId}/dossiers/${dossierId}`,
+            url: getDemarcheSimplifieeUrl(dossier),
             // tslint:disable-next-line: object-literal-sort-keys
             group: dossier.metadata.group,
             messages: alerts,
