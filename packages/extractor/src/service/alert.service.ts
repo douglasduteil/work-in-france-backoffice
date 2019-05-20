@@ -61,16 +61,20 @@ const allMessages: (dossier: DossierRecord) => DSCommentaire[] = (dossier) => {
     return allComments(dossier).filter((comment) => comment.email !== dsContactEmail);
 }
 
-const lastMessageDate = (dossier: DossierRecord) => {
+const lastMessageSentByStudentDate = (dossier: DossierRecord) => {
     const messages = allMessages(dossier);
     if (messages.length === 0) {
         return null;
     }
-    return new Date(messages[messages.length - 1].created_at);
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage.email.endsWith(configuration.direcctDomainName)) {
+        return null;
+    }
+    return new Date(lastMessage.created_at);
 }
 
 const isMessageSentAfterProcessedAt = (dossier: DossierRecord) => {
-    const lastSentDate = lastMessageDate(dossier);
+    const lastSentDate = lastMessageSentByStudentDate(dossier);
     const processedAtTime = dossier.metadata.processed_at;
     if (!lastSentDate || !processedAtTime) {
         return false;
