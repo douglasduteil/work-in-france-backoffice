@@ -1,13 +1,13 @@
-import { format } from 'date-fns';
 import { createReadStream, createWriteStream } from 'fs';
 import * as Koa from 'koa';
 import * as Router from 'koa-router';
 import { fileSync } from 'tmp';
 import { configuration } from './config';
 import { extractorService } from './extract.service';
-import { alertService } from './service/alert.service';
-import { monthlyreportService } from './service/monthly-report.service';
-import { logger } from './util';
+import { monthlyreportService } from './service';
+import { alertService } from './service/alert/alert.service';
+import { getMonthlyReportFilename } from './service/monthly-report/monthly-report.util';
+import { mimeTypes } from './util';
 
 const routeOptions: Router.IRouterOptions = {
     prefix: '/api'
@@ -33,36 +33,32 @@ router.get(`/${configuration.apiPrefix}/monthly-reports/:year/:month/:group/down
     const groupId = ctx.params.group;
     const year = ctx.params.year;
     const month = ctx.params.month - 1;
-    const monthDate = new Date(year, month, 1);
-    const monthNumber = format(monthDate, 'MM');
 
     const tempFileName = fileSync();
-    logger.info(tempFileName.name);
     const writeStream = createWriteStream(tempFileName.name);
-    await monthlyreportService.writeMonthlyReport(year, month, groupId, writeStream);
+    await monthlyreportService.writeMonthlyReportExcel(year, month, groupId, writeStream);
 
     const readStream = createReadStream(tempFileName.name);
-    ctx.res.setHeader('Content-disposition', 'attachment; filename=' + `WIF_${year}-${monthNumber}_ud${groupId}.xlsx`);
-    ctx.res.setHeader('Content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    ctx.res.setHeader('Content-disposition', 'attachment; filename=' + getMonthlyReportFilename(year, month, groupId));
+    ctx.res.setHeader('Content-type', mimeTypes.excel);
     ctx.body = readStream;
 
     tempFileName.removeCallback();
-    
+
 });
 
 router.get(`/${configuration.apiPrefix}/alerts/download`, async (ctx: Koa.Context) => {
     const tempFileName = fileSync();
-    logger.info(tempFileName.name);
     const writeStream = createWriteStream(tempFileName.name);
     await alertService.writeAlerts(writeStream);
 
     const readStream = createReadStream(tempFileName.name);
     ctx.res.setHeader('Content-disposition', 'attachment; filename=' + `WIF_dossiers-en-souffrance.xlsx`);
-    ctx.res.setHeader('Content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    ctx.res.setHeader('Content-type', mimeTypes.excel);
     ctx.body = readStream;
 
     tempFileName.removeCallback();
-    
+
 });
 
 export { router };

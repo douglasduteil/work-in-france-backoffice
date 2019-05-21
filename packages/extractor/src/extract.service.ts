@@ -3,10 +3,9 @@ import { Observable, Observer, Subject } from "rxjs";
 import { concatMap, exhaustMap, filter, flatMap, map, mergeMap } from "rxjs/operators";
 import { Alert } from "./model/alert.model";
 import { MonthlyReport } from "./model/monthly-report.model";
-import { dossierRecordService, validityCheckService } from "./service";
-import { alertService } from "./service/alert.service";
-import { monthlyreportService } from "./service/monthly-report.service";
+import { alertService, dossierRecordService, monthlyreportService } from "./service";
 import { logger } from "./util";
+import { YearMonth } from "./util/interface/year-month";
 
 class ExtractorService {
 
@@ -18,35 +17,12 @@ class ExtractorService {
         this.initAllAlertsSynchro();
     }
 
-    public syncValidityChecks() {
-        dossierRecordService.all().pipe(
-            flatMap(x => x),
-            // tap((res) => logger.info(`[ExtractorService.syncValidityChecks] dossier ${res.ds_key}`)),
-            map(validityCheckService.buildValidityChecks),
-            // tap((res) => logger.info(`[ExtractorService.syncValidityChecks] validity check`, res)),
-            mergeMap(validityCheckService.saveOrUpdate)
-        ).subscribe({
-            complete: () => logger.info(`[ExtractorService.syncValidityChecks] completed`),
-            next: next => logger.info(`[ExtractorService.syncValidityChecks] check ${next.ds_key} synchronised`)
-        })
-    }
-
     public launchGlobalMonthlyReportSynchro() {
         this.syncAllMonthlyReports$.next();
     }
 
     public launchGlobalAlertSynchro() {
         this.syncAllAlerts$.next();
-    }
-
-    public syncMonthlyReportsForPreviousMonth() {
-        const date = addMonths(new Date(), -1);
-        const year = getYear(date);
-        const month = getMonth(date);
-        monthlyreportService.syncMonthlyReports(year, month).subscribe({
-            complete: () => logger.info(`[ExtractorService.syncMonthlyReports] completed`),
-            next: (next: MonthlyReport) => logger.info(`[ExtractorService.syncMonthlyReports] report ${next.year}-${next.month} ${next.group.label} synchronised `)
-        })
     }
 
     private allMonthlyReports(): Observable<MonthlyReport> {
@@ -83,7 +59,6 @@ class ExtractorService {
     }
 }
 
-interface YearMonth { year: number, month: number };
 
 const allDates$ = Observable.create((observer: Observer<YearMonth>) => {
     let start = new Date(2018, 1, 1);

@@ -2,10 +2,10 @@ import { differenceInDays, differenceInMonths } from "date-fns";
 import { Observable } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import { Stream } from "stream";
-import { configuration } from "../config";
-import { DossierRecord, DSCommentaire, getDateDebutAPT, getDateDebutConstruction, getDateDebutInstruction, getDateFinAPT, getDemarcheSimplifieeUrl, isClosed, isInitiated, isReceived, isRefused, isWithoutContinuation } from "../model";
-import { Alert } from "../model/alert.model";
-import { alertRepository } from "../repository/alert.repository";
+import { configuration } from "../../config";
+import { DossierRecord, DSCommentaire, getDateDebutAPT, getDateDebutConstruction, getDateDebutInstruction, getDateFinAPT, getDemarcheSimplifieeUrl, isClosed, isInitiated, isReceived, isRefused, isWithoutContinuation } from "../../model";
+import { Alert } from "../../model/alert.model";
+import { alertRepository } from "../../repository/alert.repository";
 import { exportAlertsInExcel } from "./alert.excel";
 
 const dsContactEmail = configuration.alertDemarcheSimplifieeEmail;

@@ -1,8 +1,8 @@
 import { format } from "date-fns";
 import { Workbook, Worksheet } from "exceljs";
 import { Stream } from "stream";
-import { MonthlyReport, MonthlyReportCounter } from "../model/monthly-report.model";
-import { addBorder, alignCenter, createWorkbook, fontBold, fontTitle, fontTitle2 } from "./excel.util";
+import { MonthlyReport, MonthlyReportCounter } from "../../model/monthly-report.model";
+import { addBorder, alignCenter, createWorkbook, fontBold, fontTitle, fontTitle2 } from "../excel.util";
 
 class ExcelBuilder {
 

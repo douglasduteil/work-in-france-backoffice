@@ -44,11 +44,18 @@ export const configuration = {
 
     // tslint:disable-next-line: object-literal-sort-keys
     monthlyReportCron: asString('MONTHLY_REPORT_CRON'),
+    monthlyReportEmailCron: asString('MONTHLY_REPORT_EMAIL_CRON'),
+    monthlyReportEmailRecepient: asString('MONTHLY_REPORT_EMAIL_RECEPIENT'),
 
     direcctDomainName: asString('DIRECCT_DN'),
 
     alertMaxReceivedTimeInDays: asNumber(`ALERT_MAX_RECEIVED_TIME_IN_DAYS`),
     alertMaxInitiatedTimeInDays: asNumber(`ALERT_MAX_INITIATED_TIME_IN_DAYS`),
-    alertDemarcheSimplifieeEmail: asString(`ALERT_DEMARCHE_SIMPLIFIEE_EMAIL`)
+    alertDemarcheSimplifieeEmail: asString(`ALERT_DEMARCHE_SIMPLIFIEE_EMAIL`),
+
+    mailJetAPIPublicKey : asString(`MJ_APIKEY_PUBLIC`),
+    mailJetAPIPrivateKey : asString(`MJ_APIKEY_PRIVATE`),
+    mailJetSenderEmail : asString(`MJ_SENDER_EMAIL`),
+    mailJetSenderEmailName : asString(`MJ_SENDER_EMAIL_NAME`),
 };
 

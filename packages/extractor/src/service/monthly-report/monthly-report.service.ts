@@ -1,13 +1,12 @@
-import { format, getMonth, getYear } from "date-fns";
-import { createWriteStream } from 'fs';
+import { getMonth, getYear } from "date-fns";
 import { Observable } from "rxjs";
-import { flatMap, map, mergeMap, tap } from "rxjs/operators";
+import { flatMap, map, mergeMap } from "rxjs/operators";
 import { Stream } from "stream";
-import { DossierRecord, getDemarcheSimplifieeUrl, getNationality, isClosed, isLong, isRefused, isWithoutContinuation } from "../model";
-import { initReport, MonthlyReport } from "../model/monthly-report.model";
-import { monthlyReportRepository } from "../repository";
-import { logger } from "../util";
-import { dossierRecordService } from "./dossier-record.service";
+import { DossierRecord, getDemarcheSimplifieeUrl, getNationality, isClosed, isLong, isRefused, isWithoutContinuation } from "../../model";
+import { initReport, MonthlyReport } from "../../model/monthly-report.model";
+import { monthlyReportRepository } from "../../repository";
+import { logger } from "../../util";
+import { dossierRecordService } from "../dossier-record.service";
 import { writeMonthlyReport } from "./monthly-report.excel";
 
 interface GroupReport {
@@ -17,26 +16,30 @@ interface GroupReport {
 
 class MonthlyReportService {
 
-    public generateMonthlyReports() {
-        monthlyReportRepository.all().pipe(
-            flatMap(x => x),
-            tap((report) => {
-                const monthDate = new Date(report.year, report.month, 1);
-                const monthNumber = format(monthDate, 'MM');
-                const file = `excel/WIF_${report.year}-${monthNumber}_ud${report.group.id}.xlsx`
-                const stream = createWriteStream(file);
-                writeMonthlyReport(report, stream);
-            })
-        ).subscribe();
-    }
+    // public generateMonthlyReports() {
+    //     monthlyReportRepository.all().pipe(
+    //         flatMap(x => x),
+    //         tap((report) => {
+    //             const monthDate = new Date(report.year, report.month, 1);
+    //             const monthNumber = format(monthDate, 'MM');
+    //             const file = `excel/WIF_${report.year}-${monthNumber}_ud${report.group.id}.xlsx`
+    //             const stream = createWriteStream(file);
+    //             writeMonthlyReport(report, stream);
+    //         })
+    //     ).subscribe();
+    // }
 
-    public async writeMonthlyReport(year: number, month: number, groupId: string, stream: Stream) {
+    public async writeMonthlyReportExcel(year: number, month: number, groupId: string, stream: Stream) {
         const reports: MonthlyReport[] = await monthlyReportRepository.find(year, month, groupId).toPromise();
         logger.info(`[MonthlyReportService.writeMonthlyReport] ${reports.length} reports found for year: ${year}, month: ${month}, group: ${groupId}`)
         if (reports.length === 0) {
             return;
         }
         await writeMonthlyReport(reports[0], stream);
+    }
+
+    public findByYearAndMonth(year: number, month: number): Observable<MonthlyReport[]> {
+        return monthlyReportRepository.find(year, month);
     }
 
     public syncMonthlyReports(year: number, month: number): Observable<MonthlyReport> {
@@ -48,7 +51,7 @@ class MonthlyReportService {
         )
     }
 
-    public saveOrUpdate(report: MonthlyReport): Observable<MonthlyReport> {
+    private saveOrUpdate(report: MonthlyReport): Observable<MonthlyReport> {
         return monthlyReportRepository.delete(report.year, report.month, report.group.id).pipe(
             mergeMap(() => monthlyReportRepository.add(report))
         )

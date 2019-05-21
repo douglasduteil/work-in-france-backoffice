@@ -41,3 +41,4 @@ export const initReport: (year: number, month: number, group: DSGroup) => Monthl
         withoutContinuation: initMonthlyReportCounter()
     }
 }
+
