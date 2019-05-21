@@ -43,7 +43,7 @@ export const configuration = {
     validityCheckCron: asString('VALIDITY_CHECK_CRON'),
 
     // tslint:disable-next-line: object-literal-sort-keys
-    cronMontlyReport: asString('CRON_MONTHLY_REPORT'),
+    monthlyReportCron: asString('MONTHLY_REPORT_CRON'),
 
     direcctDomainName: asString('DIRECCT_DN'),
 

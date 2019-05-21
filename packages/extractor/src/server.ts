@@ -15,7 +15,7 @@ if (configuration.validityCheckEnable) {
     });
 }
 
-schedule(configuration.cronMontlyReport, () => {
+schedule(configuration.monthlyReportCron, () => {
     extractorService.syncMonthlyReportsForPreviousMonth();
 });
 
