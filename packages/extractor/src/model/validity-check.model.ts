@@ -9,6 +9,9 @@ export interface ValidityCheck extends IIdentifiable {
     has_expired: boolean;
     date_de_debut_apt: string;
     date_de_fin_apt: string;
+    metadata: {
+        fin_apt: number;
+    }
 }
 
 // "ds_id": 378335,

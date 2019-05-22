@@ -81,6 +81,18 @@ curl -X GET http://localhost:${.env.API_PORT}/api/${.env.API_PREFIX}/alerts/down
 |`monthly_reports`  | rapport mensuel pour les DIRECCT                      | `src/extractor/src/model/monthly-report.model.ts` |
 |`alerts`           | dossiers en souffrance                                | `src/extractor/src/model/alert.model.ts`          |
 |`validity-checks`  | validité des APT                                      | `src/extractor/src/model/validity-check.model.ts` |
+|`synchro_histories`| stockage des informations de synchronisation          | `src/extractor/src/model/synchro-history.model.ts`|
+
+## Synchronisation des données
+
+La fréquence des synchronisations est paramétrable dans le `.env` en modifiant les expressions `cron`. A chaque synchronisation, 2 `timestamps` sont passés, celui de la dernière synchronisation et celui correspondant à la date courante. Cela permet de synchroniser uniquement le delta. Le `timestamp` de la dernière synchro est stocké dans la collection `synchro_histories`.
+
+Liste des synchronisations:
+- Création des `validity-check`: crée les `validity-check`(expression `cron` `.env.VALIDITY_CHECK_CRON`)
+- Nettoyage des `validity-check`: supprime les `validity-check` expirés (expression `cron` `.env.VALIDITY_CHECK_CLEANER_CRON`)
+- Création des `monthly-report`: crée en les rapports mensuels pour les DIRECCT (expression `cron` `.env.MONTHLY_REPORT_CRON`)
+- Envoi des `monthly-report`: Envoi les rapports mensuels au format excel (expression `cron` `.env.MONTHLY_REPORT_EMAIL_CRON`)
+
 
 
 ## Règles de détection d'une dossier potentiellement en souffrance

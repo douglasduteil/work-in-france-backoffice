@@ -28,6 +28,10 @@ class ValidityCheckRepository extends KintoRepository<ValidityCheck> {
         return this.collection.delete();
     }
 
+    public deleteByFinAPTBefore(timestamp: number){
+        return this.collection.delete(`lt_metadata.fin_apt=${timestamp}`);
+    }
+
 }
 
 export const validityCheckRepository = new ValidityCheckRepository();

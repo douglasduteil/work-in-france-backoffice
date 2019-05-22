@@ -41,6 +41,7 @@ export const configuration = {
 
     validityCheckEnable: asBoolean('VALIDITY_CHECK_ENABLE'),
     validityCheckCron: asString('VALIDITY_CHECK_CRON'),
+    validityCheckCleanerCron: asString('VALIDITY_CHECK_CLEANER_CRON'),
 
     // tslint:disable-next-line: object-literal-sort-keys
     monthlyReportCron: asString('MONTHLY_REPORT_CRON'),

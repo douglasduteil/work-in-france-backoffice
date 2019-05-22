@@ -17,6 +17,13 @@ export const validityCheckScheduler = {
                 mergeMap(validityCheckService.addIfNotExists, undefined, 100),
                 tap((res) => logger.info(`[syncValidityChecks] validity check created ${res.ds_key} `))
             )
+        });
+
+        handleScheduler(configuration.validityCheckCleanerCron, 'validity-check-cleaner', () => {
+            const now = new Date();
+            return validityCheckService.deleteByFinAPTBefore(now.getTime()).pipe(
+                tap((res) => logger.info(`[cleanValidityChecks] ${res.length} validity checks deleted`))
+            )
         })
     }
 }
