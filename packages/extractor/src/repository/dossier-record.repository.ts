@@ -20,10 +20,11 @@ class DossierRecordRepository {
 
     public allByProcessedAtBetween(start: number, end: number): Observable<DossierRecord[]> {
         return this.collection.search(`gt_metadata.processed_at=${start}&lt_metadata.processed_at=${end}`);
+
     }
 
-    public allByState(state: string): Observable<DossierRecord[]> {
-        return this.collection.search(`metadata.state="${state}"`);
+    public allByStateAndProcessedAtBetween(state: string, start: number, end: number): Observable<DossierRecord[]> {
+        return this.collection.search(`metadata.state="${state}"&gt_metadata.processed_at=${start}&lt_metadata.processed_at=${end}`);
     }
 
 }

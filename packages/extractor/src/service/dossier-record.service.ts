@@ -15,8 +15,8 @@ class DossierRecordService {
         return dossierRecordRepository.allByProcessedAtBetween(start, end);
     }
 
-    public allByState(state: string) {
-        return dossierRecordRepository.allByState(state);
+    public allByStateAndProcessedAtBetween(state: string, start: number, end: number) {
+        return dossierRecordRepository.allByStateAndProcessedAtBetween(state, start, end);
     }
 
 }

@@ -37,6 +37,11 @@ curl -u admin:passw0rd  \
      -d '{"data": {"id": "alerts"}}' \
      -H 'Content-Type:application/json' 
 
+curl -u admin:passw0rd  \
+     -X POST http://localhost:8889/v1/buckets/wif_public/collections \
+     -d '{"data": {"id": "synchro_histories"}}' \
+     -H 'Content-Type:application/json' 
+
 ## the group `system` has READ/WRITE permission on `validity_checks`, `monthly_reports`, `alerts`
 
 curl -u admin:passw0rd  \
@@ -56,6 +61,11 @@ curl -u admin:passw0rd  \
 
 curl -u admin:passw0rd  \
      -X PATCH http://localhost:8889/v1/buckets/wif_public/collections/alerts \
+     -d '{"permissions": {"write": ["/buckets/wif_public/groups/system"]}}' \
+     -H 'Content-Type:application/json' 
+
+curl -u admin:passw0rd  \
+     -X PATCH http://localhost:8889/v1/buckets/wif_public/collections/synchro_histories \
      -d '{"permissions": {"write": ["/buckets/wif_public/groups/system"]}}' \
      -H 'Content-Type:application/json' 
 
