@@ -96,8 +96,8 @@ export const getPrenomValue = (doc: DossierRecord) => getPublicFieldValue(doc, "
 export const getNomValue = (doc: DossierRecord) => getPublicFieldValue(doc, "Nom");
 export const getDateNaissanceValue = (doc: DossierRecord) => getPublicFieldValue(doc, "Date de naissance");
 
-export const getDateFinAPT = (dossier: DossierRecord) => asDate(getDateDebutAPTValue(dossier));
-export const getDateDebutAPT = (dossier: DossierRecord) => asDate(getDateFinAPTValue(dossier));
+export const getDateFinAPT = (dossier: DossierRecord) => asDate(getDateFinAPTValue(dossier));
+export const getDateDebutAPT = (dossier: DossierRecord) => asDate(getDateDebutAPTValue(dossier));
 
 
 export const getDateDebutInstruction = (doc: DossierRecord) => asDate(doc.metadata.received_at);
