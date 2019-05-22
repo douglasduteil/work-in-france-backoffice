@@ -1,7 +1,7 @@
 import { configuration } from "../../config";
 import { MonthlyReport } from "../../model/monthly-report.model";
 import { mimeTypes } from "../../util";
-import { sendEmail } from "../email.service";
+import { sendEmail } from "../email/email.service";
 import { getMonthlyReportFilename } from "./monthly-report.util";
 
 export const sendMonthlyReportEmail = (report: MonthlyReport) => {
@@ -22,9 +22,9 @@ const buildMonthlyReportEmail = (report: MonthlyReport) => {
         
         L'équipe Work In France`,
         attachment: {
+            Base64Content: '',
             ContentType: mimeTypes.excel,
             Filename: getMonthlyReportFilename(report.year, report.month, report.group.id),
-            Base64Content: ''
         }
     }
 }

@@ -55,9 +55,11 @@ export const configuration = {
     alertMaxInitiatedTimeInDays: asNumber(`ALERT_MAX_INITIATED_TIME_IN_DAYS`),
     alertDemarcheSimplifieeEmail: asString(`ALERT_DEMARCHE_SIMPLIFIEE_EMAIL`),
 
-    mailJetAPIPublicKey : asString(`MJ_APIKEY_PUBLIC`),
-    mailJetAPIPrivateKey : asString(`MJ_APIKEY_PRIVATE`),
-    mailJetSenderEmail : asString(`MJ_SENDER_EMAIL`),
-    mailJetSenderEmailName : asString(`MJ_SENDER_EMAIL_NAME`),
+    mailHost : asString(`MAIL_HOST`),
+    mailPort : asNumber(`MAIL_PORT`),
+    mailUsername : asString(`MAIL_USERNAME`),
+    mailPassword : asString(`MAIL_PASSWORD`),
+    mailuseTLS: asBoolean(`MAIL_USE_TLS`)
+    
 };
 
