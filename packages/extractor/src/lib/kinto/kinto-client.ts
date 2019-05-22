@@ -22,7 +22,7 @@ export interface KintoCollection<T> {
 
     all(): Observable<T[]>;
 
-    delete(filter: string): Observable<DeletedData[]>;
+    delete(filter?: string): Observable<DeletedData[]>;
 
     search(filter: string): Observable<T[]>;
 }
@@ -48,8 +48,12 @@ class KintoClient {
                     map((res: KintoResult<T[]>) => res.data)
                 );
             },
-            delete: (filter: string) => {
-                return this.client.delete<KintoResult<DeletedData[]>>(`${collectionName}/records?${filter}`).pipe(
+            delete: (filter?: string) => {
+                let resource = `${collectionName}/records`
+                if (filter) {
+                    resource = resource + `?${filter}`
+                }
+                return this.client.delete<KintoResult<DeletedData[]>>(resource).pipe(
                     map((res: KintoResult<DeletedData[]>) => (res.data) ? res.data : []),
                 );
             },

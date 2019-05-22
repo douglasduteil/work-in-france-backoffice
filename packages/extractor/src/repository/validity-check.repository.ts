@@ -20,6 +20,10 @@ class ValidityCheckRepository extends KintoRepository<ValidityCheck> {
         return this.collection.delete(`ds_key="${dsKey}"`);
     }
 
+    public deleteAll(): Observable<DeletedData[]> {
+        return this.collection.delete();
+    }
+
 }
 
 export const validityCheckRepository = new ValidityCheckRepository();

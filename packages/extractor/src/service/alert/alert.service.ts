@@ -22,6 +22,10 @@ class AlertService {
         await exportAlertsInExcel(alerts, stream);
     }
 
+    public deleteAll(){
+        return alertRepository.deleteAll();
+    }
+
 
     public saveOrUpdate(alert: Alert): Observable<Alert> {
         return alertRepository.deleteByDSKey(alert.ds_key).pipe(

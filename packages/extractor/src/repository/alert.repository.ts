@@ -20,6 +20,9 @@ class AlertRepository extends KintoRepository<Alert> {
     public deleteByDSKey(dsKey: string): Observable<DeletedData[]> {
         return this.collection.delete(`ds_key="${dsKey}"`);
     }
+    public deleteAll(): Observable<DeletedData[]> {
+        return this.collection.delete();
+    }
 
 }
 
