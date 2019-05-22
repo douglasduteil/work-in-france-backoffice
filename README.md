@@ -1,5 +1,8 @@
 # work-in-france-backoffice
 
+[![Build Status](https://travis-ci.com/SocialGouv/work-in-france-backoffice.svg?branch=master)](https://travis-ci.com/SocialGouv/work-in-france-backoffice)
+[![codecov](https://codecov.io/gh/SocialGouv/work-in-france-backoffice/branch/master/graph/badge.svg)](https://codecov.io/gh/SocialGouv/work-in-france-backoffice)
+
 Ce dépot doit remplacer à terme `work-in-france-extractor` et `work-in-france-bo-public`
 
 Back office de Work In France:
