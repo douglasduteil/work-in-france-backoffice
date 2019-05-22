@@ -15,6 +15,10 @@ class DossierRecordService {
         return dossierRecordRepository.allByProcessedAtBetween(start, end);
     }
 
+    public allByState(state: string) {
+        return dossierRecordRepository.allByState(state);
+    }
+
 }
 
 export const dossierRecordService = new DossierRecordService();

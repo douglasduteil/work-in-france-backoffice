@@ -3,8 +3,9 @@ import { addMonths, getMonth, getYear } from 'date-fns';
 import * as Koa from 'koa';
 import * as bodyParser from 'koa-bodyparser';
 import { schedule } from 'node-cron';
-import { flatMap, map, mergeMap } from 'rxjs/operators';
+import { concatMap, filter, flatMap, mergeMap, reduce, tap } from 'rxjs/operators';
 import { configuration } from './config';
+import { ValidityCheck } from './model';
 import { router } from './routes';
 import { dossierRecordService, monthlyreportService, sendMonthlyReportEmail, validityCheckService } from './service';
 import { getMonthlyReportFilename } from './service/monthly-report/monthly-report.util';
@@ -25,13 +26,21 @@ app.listen(configuration.apiPort);
 
 if (configuration.validityCheckEnable) {
     schedule(configuration.validityCheckCron, () => {
-        dossierRecordService.all().pipe(
+        logger.info(`[syncValidityChecks] start validity checks synchro`)
+        dossierRecordService.allByState('closed').pipe(
+            tap((res) => logger.info(`[syncValidityChecks] ${res.length} dossiers fetched`)),
             flatMap(x => x),
-            map(validityCheckService.buildValidityChecks),
-            mergeMap(validityCheckService.saveOrUpdate)
+            filter(validityCheckService.isValid),
+            concatMap(validityCheckService.addIfNotExists),
+            tap((res) => logger.info(`[syncValidityChecks] validity check created ${res.ds_key} `)),
+            reduce((acc: ValidityCheck[], current: ValidityCheck) => {
+                acc.push(current);
+                return acc;
+            }, []),
         ).subscribe({
             complete: () => logger.info(`[syncValidityChecks] completed`),
-            next: next => logger.info(`[syncValidityChecks] validity check synchronised: ${next.ds_key}`)
+            error: (err) => logger.error(`[syncValidityChecks] error `, err),
+            next: next => logger.info(`[syncValidityChecks] ${next.length} validity check created`)
         })
     });
 }

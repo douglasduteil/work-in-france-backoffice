@@ -16,6 +16,10 @@ class ValidityCheckRepository extends KintoRepository<ValidityCheck> {
         return this.collection.add(validityCheck);
     }
 
+    public findByDSKey(dsKey: string): Observable<ValidityCheck[]> {
+        return this.collection.search(`ds_key="${dsKey}"`);
+    }
+
     public deleteByDSKey(dsKey: string): Observable<DeletedData[]> {
         return this.collection.delete(`ds_key="${dsKey}"`);
     }
