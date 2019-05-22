@@ -57,9 +57,10 @@ export const configuration = {
 
     mailHost : asString(`MAIL_HOST`),
     mailPort : asNumber(`MAIL_PORT`),
+    mailFrom: asString('MAIL_FROM'),
     mailUsername : asString(`MAIL_USERNAME`),
     mailPassword : asString(`MAIL_PASSWORD`),
-    mailuseTLS: asBoolean(`MAIL_USE_TLS`)
+    mailUseTLS: asBoolean(`MAIL_USE_TLS`)
     
 };
 

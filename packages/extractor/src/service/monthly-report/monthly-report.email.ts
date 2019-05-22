@@ -1,19 +1,21 @@
 import { configuration } from "../../config";
 import { MonthlyReport } from "../../model/monthly-report.model";
-import { mimeTypes } from "../../util";
-import { sendEmail } from "../email/email.service";
-import { getMonthlyReportFilename } from "./monthly-report.util";
+import { sendEmail } from "../email";
 
 export const sendMonthlyReportEmail = (report: MonthlyReport) => {
     return sendEmail(buildMonthlyReportEmail(report));
 }
 
+
 const buildMonthlyReportEmail = (report: MonthlyReport) => {
     return {
-        recipient: {
+        to: [{
             email: configuration.monthlyReportEmailRecepient,
             name: configuration.monthlyReportEmailRecepient
-        },
+        }],
+        // tslint:disable-next-line: object-literal-sort-keys
+        bcc: [],
+        cci: [],
         subject: `Work In France: rapport mensuel ${report.group.id}`,
         // tslint:disable-next-line: object-literal-sort-keys
         bodyText: `Bonjour,
@@ -21,10 +23,11 @@ const buildMonthlyReportEmail = (report: MonthlyReport) => {
         Veuillez trouver le rapport mensuel de Work In France en pièce jointe.
         
         L'équipe Work In France`,
-        attachment: {
-            Base64Content: '',
-            ContentType: mimeTypes.excel,
-            Filename: getMonthlyReportFilename(report.year, report.month, report.group.id),
-        }
+        attachments: []
+        // attachments: [{
+        //     cid: '',
+        //     filename: getMonthlyReportFilename(report.year, report.month, report.group.id),
+        //     path: mimeTypes.excel
+        // }]
     }
 }
