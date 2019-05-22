@@ -54,6 +54,7 @@ class ExtractorService {
             exhaustMap(_ => this.allAlerts())
         ).subscribe({
             complete: () => logger.info(`[ExtractorService.syncAlerts] completed`),
+            error: (err) => logger.error(`[ExtractorService.syncAlerts] error`, err),
             next: (next: Alert) => logger.info(`[ExtractorService.syncAlerts] alert ${next.ds_key} created `)
         });
     }
