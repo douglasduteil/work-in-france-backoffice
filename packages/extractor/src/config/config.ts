@@ -19,11 +19,11 @@ const asNumber = (arg: any): number => {
 }
 
 const asBoolean = (arg: any): boolean => {
-    const res = process.env[arg]
+    const res = process.env[arg];
     if (!res) {
         throw new Error(`env variable ${arg} is required`);
     }
-    return 'true' === arg ? true : false;
+    return 'true' === res ? true : false;
 }
 
 export const configuration = {
