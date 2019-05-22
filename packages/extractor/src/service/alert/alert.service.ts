@@ -42,16 +42,12 @@ class AlertService {
             this.addAlert(alerts, dossier, isFinAPTBeforeDebutAPT, 'Date de fin APT antérieure à Date de début APT');
             this.addAlert(alerts, dossier, isAPTSup12Months, 'Durée APT supérieure à 12 mois');
             this.addAlert(alerts, dossier, isMessageSentAfterProcessedAt, 'Message envoyé après acceptation du dossier');
-            this.addAlert(alerts, dossier, instructorIsNotDefined, 'Aucun instructeur définit, dossier accepté');
         } else if (isRefused(dossier)) {
             this.addAlert(alerts, dossier, isMessageSentAfterProcessedAt, 'Message envoyé après refus du dossier');
-            this.addAlert(alerts, dossier, instructorIsNotDefined, 'Aucun instructeur définit, dossier refusé');
         } else if (isWithoutContinuation(dossier)) {
             this.addAlert(alerts, dossier, isMessageSentAfterProcessedAt, 'Message envoyé après le classement sans suite');
-            this.addAlert(alerts, dossier, instructorIsNotDefined, 'Aucun instructeur définit, dossier sans suite');
         } else if (isReceived(dossier)) {
             this.addAlert(alerts, dossier, isReceivedTimeTooLong, 'Durée d\'instruction de dossier dépassée');
-            this.addAlert(alerts, dossier, instructorIsNotDefined, 'Aucun instructeur définit, dossier en instruction');
         } else if (isInitiated(dossier)) {
             this.addAlert(alerts, dossier, isInitiatedTimeTooLong, 'Durée de construction de dossier dépassée');
         }
@@ -120,17 +116,6 @@ const delayTooLong = (date: Date | null, maxDelay: number) => {
     }
     const now = new Date();
     return differenceInDays(date, now) > maxDelay;
-}
-
-const instructorIsNotDefined = (dossier: DossierRecord) => {
-    const instructors = dossier.ds_data.instructeurs;
-    if (!instructors) {
-        return true;
-    }
-    if (instructors.length === 0) {
-        return true;
-    }
-    return false;
 }
 
 const isDateDebutAPTNotPresent = (dossier: DossierRecord) => {
