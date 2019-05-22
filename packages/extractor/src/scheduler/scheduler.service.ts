@@ -9,6 +9,7 @@ const schedulerStates = new Map<string, boolean>();
 export const handleScheduler = (cron: string, scheduler: string, process: (start: number, end: number) => Observable<any>) => {
     schedule(cron, () => {
         if (schedulerStates.get(scheduler)) {
+            logger.info(`[Scheduler] ${scheduler} is running...`);
             return;
         }
         schedulerStates.set(scheduler, true);

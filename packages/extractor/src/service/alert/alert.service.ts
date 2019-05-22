@@ -127,8 +127,8 @@ const isDateFinAPTNotPresent = (dossier: DossierRecord) => {
 }
 
 const isFinAPTBeforeDebutAPT = (dossier: DossierRecord) => {
-    const fin = getDateDebutAPT(dossier);
-    const debut = getDateFinAPT(dossier);
+    const debut = getDateDebutAPT(dossier);
+    const fin = getDateFinAPT(dossier);
     if (!fin || !debut) {
         return false;
     }

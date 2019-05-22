@@ -19,6 +19,10 @@ class DossierRecordService {
         return dossierRecordRepository.allByStateAndProcessedAtBetween(state, start, end);
     }
 
+    public allByUpdatedAtBetween(start: number, end: number) {
+        return dossierRecordRepository.allByUpdatedAtBetween(start, end);
+    }
+
 }
 
 export const dossierRecordService = new DossierRecordService();

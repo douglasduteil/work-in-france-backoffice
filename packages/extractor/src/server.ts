@@ -4,9 +4,11 @@ import * as bodyParser from 'koa-bodyparser';
 import { configuration } from './config';
 import { router } from './routes';
 import { monthlyReportScheduler, validityCheckScheduler } from './scheduler';
+import { alertScheduler } from './scheduler/alert.scheduler';
 
 validityCheckScheduler.start();
 monthlyReportScheduler.start();
+alertScheduler.start();
 
 const app = new Koa();
 

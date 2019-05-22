@@ -32,11 +32,12 @@ class ExtractorService {
     }
 
     private allAlerts(): Observable<Alert> {
-        return dossierRecordService.all().pipe(
+        return alertService.deleteAll().pipe(
+            mergeMap(() => dossierRecordService.all()),
             flatMap(x => x),
             map(x => alertService.getAlert(x)),
             filter(x => x.messages.length > 0),
-            mergeMap((alert: Alert) => alertService.saveOrUpdate(alert)),
+            mergeMap((alert: Alert) => alertService.saveOrUpdate(alert), undefined, 100),
         )
     }
 

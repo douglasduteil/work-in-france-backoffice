@@ -27,6 +27,10 @@ class DossierRecordRepository {
         return this.collection.search(`metadata.state="${state}"&gt_metadata.processed_at=${start}&lt_metadata.processed_at=${end}`);
     }
 
+    public allByUpdatedAtBetween(start: number, end: number): Observable<DossierRecord[]> {
+        return this.collection.search(`gt_metadata.updated_at=${start}&lt_metadata.updated_at=${end}`);
+    }
+
 }
 
 export const dossierRecordRepository = new DossierRecordRepository();
