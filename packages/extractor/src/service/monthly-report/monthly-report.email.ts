@@ -1,5 +1,6 @@
 import { createWriteStream } from "fs";
-import { concatMap, map, tap } from "rxjs/operators";
+import { of } from "rxjs";
+import { concatMap, map, mergeMap, tap } from "rxjs/operators";
 import { fileSync } from "tmp";
 import { configuration } from "../../config";
 import { MonthlyReport } from "../../model/monthly-report.model";
@@ -10,10 +11,14 @@ import { getMonthlyReportFilename } from "./monthly-report.util";
 export const sendMonthlyReportEmail = (report: MonthlyReport) => {
     const tempFileName = fileSync();
     const writeStream = createWriteStream(tempFileName.name);
-    return writeMonthlyReport(report, writeStream).pipe(
-        map(() => buildMonthlyReportEmail(report, tempFileName.name)),
-        concatMap(sendEmail),
-        tap(() => tempFileName.removeCallback())
+    return of({ report, tempFileName, writeStream }).pipe(
+        mergeMap(
+            arg => writeMonthlyReport(arg.report, arg.writeStream),
+            (arg) => arg),
+        map((arg) => ({ ...arg, email: buildMonthlyReportEmail(arg.report, arg.tempFileName.name) })),
+        concatMap(arg => sendEmail(arg.email),
+            (arg, emailResponse) => ({ ...arg, emailResponse })),
+        tap((res) => res.tempFileName.removeCallback())
     )
 }
 

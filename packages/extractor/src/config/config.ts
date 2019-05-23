@@ -45,7 +45,6 @@ export const configuration = {
 
     // tslint:disable-next-line: object-literal-sort-keys
     monthlyReportCron: asString('MONTHLY_REPORT_CRON'),
-    monthlyReportEmailCron: asString('MONTHLY_REPORT_EMAIL_CRON'),
     monthlyReportEmailRecepient: asString('MONTHLY_REPORT_EMAIL_RECEPIENT'),
 
     direcctDomainName: asString('DIRECCT_DN'),

@@ -90,8 +90,8 @@ La fréquence des synchronisations est paramétrable dans le `.env` en modifiant
 Liste des synchronisations:
 - Création des `validity-check`: crée les `validity-check`(expression `cron` `.env.VALIDITY_CHECK_CRON`)
 - Nettoyage des `validity-check`: supprime les `validity-check` expirés (expression `cron` `.env.VALIDITY_CHECK_CLEANER_CRON`)
-- Création des `monthly-report`: crée en les rapports mensuels pour les DIRECCT (expression `cron` `.env.MONTHLY_REPORT_CRON`)
-- Envoi des `monthly-report`: Envoi les rapports mensuels au format excel (expression `cron` `.env.MONTHLY_REPORT_EMAIL_CRON`)
+- Création des `monthly-report`: crée et envoie les rapports mensuels pour les DIRECCT (expression `cron` `.env.MONTHLY_REPORT_CRON`)
+
 
 
 

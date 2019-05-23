@@ -1,5 +1,5 @@
 import { addMonths, getMonth, getYear } from "date-fns";
-import { concatMap, flatMap, tap } from "rxjs/operators";
+import { concatMap, tap } from "rxjs/operators";
 import { configuration } from "../config";
 import { monthlyreportService, sendMonthlyReportEmail } from "../service";
 import { logger, YearMonth } from "../util";
@@ -10,19 +10,12 @@ export const monthlyReportScheduler = {
     start: () => {
         handleScheduler(configuration.monthlyReportCron, 'monthly-report', () => {
             const { month, year } = getPreviousMonthYear();
-            return monthlyreportService.syncMonthlyReports(year, month);
-        });
-
-        handleScheduler(configuration.monthlyReportEmailCron, 'monthly-report-email', () => {
-            const { month, year } = getPreviousMonthYear();
-            return monthlyreportService.findByYearAndMonth(year, month).pipe(
-                flatMap(x => x),
-                concatMap(
-                    (report) => sendMonthlyReportEmail(report),
-                    (report, emailResponse) => ({ report, emailResponse })),
-                tap(res => logger.info(`[Monthly Report Email] success: ${res.report.group.id}, ${res.emailResponse.id}`))
+            return monthlyreportService.syncMonthlyReports(year, month).pipe(
+                concatMap((report) => sendMonthlyReportEmail(report)),
+                tap(res => logger.info(`[Monthly Report Email] success: ${res.report.group.id} - ${res.emailResponse.id}`))
             );
         });
+
     }
 }
 
