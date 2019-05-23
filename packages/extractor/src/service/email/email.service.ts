@@ -1,6 +1,7 @@
-import { createTransport } from "nodemailer";
+import { createTransport, SentMessageInfo } from "nodemailer";
 import { configuration } from "../../config";
 import { logger } from "../../util";
+import { from, Observable } from "rxjs";
 
 
 export interface Attachment {
@@ -36,7 +37,7 @@ const transporter = createTransport({
 });
 
 // https://github.com/nodemailer/nodemailer/blob/master/examples/sendmail.js
-export const sendEmail = async (email: Email) => {
+export const sendEmail : (email: Email) => Observable<SentMessageInfo> = (email: Email) => {
     logger.info(`[EmailService.sendEmail] subject ${email.subject}`);
     const message = {
         from: configuration.mailFrom,
@@ -54,5 +55,6 @@ export const sendEmail = async (email: Email) => {
         }))
     };
 
-    await transporter.sendMail(message);
+    return from(transporter.sendMail(message));
+    
 }

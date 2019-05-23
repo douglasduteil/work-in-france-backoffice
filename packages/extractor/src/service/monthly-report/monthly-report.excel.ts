@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import { Workbook, Worksheet } from "exceljs";
+import { from, Observable } from "rxjs";
 import { Stream } from "stream";
 import { MonthlyReport, MonthlyReportCounter } from "../../model/monthly-report.model";
 import { addBorder, alignCenter, createWorkbook, fontBold, fontTitle, fontTitle2 } from "../excel.util";
@@ -99,7 +100,7 @@ class ExcelBuilder {
 
 }
 
-export const writeMonthlyReport = async (report: MonthlyReport, stream: Stream) => {
+export const writeMonthlyReport: (report: MonthlyReport, stream: Stream) => Observable<void> = (report: MonthlyReport, stream: Stream) => {
     const builder = new ExcelBuilder();
     const monthDate = new Date(report.year, report.month, 1);
     const monthNumber = format(monthDate, 'MM');
@@ -134,6 +135,6 @@ export const writeMonthlyReport = async (report: MonthlyReport, stream: Stream) 
     }
 
     // await builder.workbook.xlsx.writeFile(`excel/WIF_${report.year}-${monthNumber}_ud${report.group.id}.xlsx`);
-    await builder.workbook.xlsx.write(stream);
+    return from(builder.workbook.xlsx.write(stream));
 
 }

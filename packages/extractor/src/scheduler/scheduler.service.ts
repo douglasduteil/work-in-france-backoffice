@@ -24,10 +24,15 @@ export const handleScheduler = (cron: string, scheduler: string, process: (start
             mergeMap(() => synchroHistoryService.update(scheduler, end))
         ).subscribe({
             complete: () => completeProcess(scheduler),
-            error: (err) => logger.error(`[Scheduler] ${scheduler} error `, err),
+            error: (err) => handleError(scheduler, err),
         });
     })
 
+}
+
+const handleError = (scheduler: string, err: any) => {
+    logger.error(`[Scheduler] ${scheduler} error `, err);
+    schedulerStates.set(scheduler, false);
 }
 
 const completeProcess = (scheduler: string) => {
