@@ -12,7 +12,7 @@ export const monthlyReportScheduler = {
             const { month, year } = getPreviousMonthYear();
             return monthlyreportService.syncMonthlyReports(year, month).pipe(
                 concatMap((report) => sendMonthlyReportEmail(report)),
-                tap(res => logger.info(`[Monthly Report Email] success: ${res.report.group.id} - ${res.emailResponse.id}`))
+                tap(res => logger.info(`[Monthly Report Email] success: ${res.report.group.id} - ${res.emailResponse.messageId}`))
             );
         });
 
