@@ -16,19 +16,6 @@ interface GroupReport {
 
 class MonthlyReportService {
 
-    // public generateMonthlyReports() {
-    //     monthlyReportRepository.all().pipe(
-    //         flatMap(x => x),
-    //         tap((report) => {
-    //             const monthDate = new Date(report.year, report.month, 1);
-    //             const monthNumber = format(monthDate, 'MM');
-    //             const file = `excel/WIF_${report.year}-${monthNumber}_ud${report.group.id}.xlsx`
-    //             const stream = createWriteStream(file);
-    //             writeMonthlyReport(report, stream);
-    //         })
-    //     ).subscribe();
-    // }
-
     public async writeMonthlyReportExcel(year: number, month: number, groupId: string, stream: Stream) {
         const reports: MonthlyReport[] = await monthlyReportRepository.find(year, month, groupId).toPromise();
         logger.info(`[MonthlyReportService.writeMonthlyReport] ${reports.length} reports found for year: ${year}, month: ${month}, group: ${groupId}`)
