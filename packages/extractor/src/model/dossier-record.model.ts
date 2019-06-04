@@ -1,4 +1,4 @@
-import { differenceInMonths } from "date-fns";
+import { differenceInDays } from "date-fns";
 import { asDate, IIdentifiable, logger } from "../util";
 
 export interface DSGroup {
@@ -109,7 +109,7 @@ export const isLong = (doc: DossierRecord) => {
     if (!startDate || !endDate) {
         return false;
     }
-    return differenceInMonths(endDate, startDate) > 3;
+    return differenceInDays(endDate, startDate) + 1 >= 91;
 };
 
 const getState = (dossier: DossierRecord) => dossier.metadata.state;
