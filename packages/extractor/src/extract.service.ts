@@ -45,8 +45,9 @@ class ExtractorService {
         this.syncAllMonthlyReports$.pipe(
             exhaustMap(_ => this.allMonthlyReports())
         ).subscribe({
-            complete: () => logger.info(`[ExtractorService.syncMonthlyReports] completed`),
-            next: (next: MonthlyReport) => logger.info(`[ExtractorService.syncMonthlyReports] report ${next.year}-${next.month} ${next.group.label} synchronised `)
+            complete: () => logger.info(`[monthly reports synchro] completed`),
+            error: (err) => logger.error(`[monthly reports synchro] error: `, err),
+            next: (next: MonthlyReport) => logger.info(`[monthly reports synchro] report ${next.year}-${next.month} ${next.group.label} synchronised `)
         });
     }
 
@@ -54,9 +55,9 @@ class ExtractorService {
         this.syncAllAlerts$.pipe(
             exhaustMap(_ => this.allAlerts())
         ).subscribe({
-            complete: () => logger.info(`[ExtractorService.syncAlerts] completed`),
-            error: (err) => logger.error(`[ExtractorService.syncAlerts] error`, err),
-            next: (next: Alert) => logger.info(`[ExtractorService.syncAlerts] alert ${next.ds_key} created `)
+            complete: () => logger.info(`[alerts synchro] completed`),
+            error: (err) => logger.error(`[alerts synchro] error: `, err),
+            next: (next: Alert) => logger.info(`[alerts synchro] alert ${next.ds_key} created `)
         });
     }
 }

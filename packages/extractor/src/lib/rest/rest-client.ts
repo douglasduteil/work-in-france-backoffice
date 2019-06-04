@@ -1,5 +1,5 @@
 
-import { from, Observable, of } from 'rxjs';
+import { from, Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import * as handlers from 'typed-rest-client/Handlers';
 import * as rm from 'typed-rest-client/RestClient';
@@ -25,34 +25,34 @@ export class RestClient {
     public get<T>(url: string): Observable<T> {
         return from(this.client.get<any>(this.buildResourcePath(url))).pipe(
             map(this.handleResult),
-            catchError(err => this.handleError(err, url))
+            catchError(err => this.handleError(err))
         );
     }
 
     public create<T>(url: string, data: any): Observable<T> {
         return from(this.client.create<any>(this.buildResourcePath(url), data)).pipe(
             map(this.handleResult),
-            catchError(err => this.handleError(err, url))
+            catchError(err => this.handleError(err))
         );
     }
 
     public delete<T>(url: string): Observable<T> {
         return from(this.client.del<any>(this.buildResourcePath(url))).pipe(
             map(this.handleResult),
-            catchError(err => this.handleError(err, url))
+            catchError(err => this.handleError(err))
         );
     }
 
     public update<T>(url: string, data: any): Observable<T> {
         return from(this.client.update<any>(this.buildResourcePath(url), data)).pipe(
             map(this.handleResult),
-            catchError(err => this.handleError(err, url)),
+            catchError(err => this.handleError(err)),
         );
     }
 
-    private handleError(error: any, url: string): Observable<any> {
+    private handleError(error: any): Observable<any> {
         logger.error('[RestClient] error: ', error);
-        return of(`[RestClient] error ${url}: ${error}`);
+        return throwError(error);
     }
 
     private handleResult(res: rm.IRestResponse<any>) {
