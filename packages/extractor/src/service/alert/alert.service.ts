@@ -14,6 +14,11 @@ const maxInitiatedTimeInDays = configuration.alertMaxInitiatedTimeInDays;
 
 class AlertService {
 
+    public markAsSent(alert: Alert, messageId: string) {
+        alert.email_id = messageId;
+        return alertRepository.update(alert);
+    }
+
     public async writeAlerts(stream: Stream) {
         const alerts: Alert[] = await alertRepository.all().toPromise();
         if (alerts.length === 0) {

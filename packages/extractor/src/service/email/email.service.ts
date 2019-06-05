@@ -1,7 +1,7 @@
 import { createTransport, SentMessageInfo } from "nodemailer";
+import { from, Observable } from "rxjs";
 import { configuration } from "../../config";
 import { logger } from "../../util";
-import { from, Observable } from "rxjs";
 
 
 export interface Attachment {

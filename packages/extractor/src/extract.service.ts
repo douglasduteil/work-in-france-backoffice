@@ -33,9 +33,7 @@ class ExtractorService {
             next: (next: MonthlyReport) => logger.info(`[monthly reports synchro] report ${next.year}-${next.month} ${next.group.label} synchronised `)
         });
     }
-
 }
-
 
 const allDates$ = Observable.create((observer: Observer<YearMonth>) => {
     let start = new Date(2018, 1, 1);

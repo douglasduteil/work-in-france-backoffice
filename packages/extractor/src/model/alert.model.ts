@@ -8,6 +8,7 @@ export interface Alert extends IIdentifiable {
     code: number;
     message: string;
     instructors_history: string[];
+    email_id?: string;
 }
 
 export interface AlertType {
