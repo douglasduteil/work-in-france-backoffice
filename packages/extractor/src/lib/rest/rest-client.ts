@@ -51,7 +51,7 @@ export class RestClient {
     }
 
     private handleError(error: any): Observable<any> {
-        logger.error('[RestClient] error: ', error);
+        logger.error('[RestClient] ', error);
         return throwError(error);
     }
 
