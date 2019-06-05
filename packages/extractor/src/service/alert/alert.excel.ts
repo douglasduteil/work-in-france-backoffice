@@ -23,26 +23,19 @@ export const exportAlertsInExcel = async (alerts: Alert[], stream: Stream) => {
         { header: "Lien", key: 'url', width: 30 },
     ];
 
-    const rows: RowAlert[] = [];
-    alerts.map(alert => exportRows(alert)).forEach(res => res.forEach(a => rows.push(a)));
-
-
-    rows.forEach(row => {
-        worksheet.addRow(row);
-    });
+    alerts.map(alert => exportRows(alert)).forEach(row => worksheet.addRow(row));
 
     await workbook.xlsx.write(stream);
 
 }
 
-const exportRows: (alert: Alert) => RowAlert[] = (alert: Alert) => {
-    return alert.messages.map(message => (
-        {
-            'ds_key': alert.ds_key
-            , group: alert.group.label, message
-            // tslint:disable-next-line: object-literal-sort-keys
-            , instructors_history: asString(alert.instructors_history, ', ')
-            , url: alert.url
-        }
-    ));
+const exportRows: (alert: Alert) => RowAlert = (alert: Alert) => {
+    return {
+        'ds_key': alert.ds_key
+        , group: alert.group.label
+        , message: alert.message
+        // tslint:disable-next-line: object-literal-sort-keys
+        , instructors_history: asString(alert.instructors_history, ', ')
+        , url: alert.url
+    }
 }

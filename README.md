@@ -53,11 +53,6 @@ lancer une synchronisation globale de rapports mensuels (dans tous les cas, les 
 curl -X POST http://localhost:${.env.API_PORT}/api/${.env.API_PREFIX}/monthly-reports/sync-all
 ```
 
-lancer le calcul des dossiers en souffrances
-```bash
-curl -X POST http://localhost:${.env.API_PORT}/api/${.env.API_PREFIX}/alerts/sync-all
-```
-
 télécharger un rapport mensuel sous format `xlsx`
  ```bash
 curl -X GET http://localhost:${.env.API_PORT}/api/${.env.API_PREFIX}/monthly-reports/:year/:month/:group/download

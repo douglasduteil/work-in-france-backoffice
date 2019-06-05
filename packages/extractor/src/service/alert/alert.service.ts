@@ -1,10 +1,10 @@
 import { differenceInDays, differenceInMonths } from "date-fns";
 import { Observable } from "rxjs";
-import { mergeMap } from "rxjs/operators";
+import { filter, mergeMap } from "rxjs/operators";
 import { Stream } from "stream";
 import { configuration } from "../../config";
 import { DossierRecord, DSCommentaire, getDateDebutAPT, getDateDebutConstruction, getDateDebutInstruction, getDateFinAPT, getDemarcheSimplifieeUrl, isClosed, isInitiated, isReceived, isRefused, isWithoutContinuation } from "../../model";
-import { Alert } from "../../model/alert.model";
+import { Alert, AlertType, alertTypes } from "../../model/alert.model";
 import { alertRepository } from "../../repository/alert.repository";
 import { exportAlertsInExcel } from "./alert.excel";
 
@@ -22,50 +22,48 @@ class AlertService {
         await exportAlertsInExcel(alerts, stream);
     }
 
-    public deleteAll(){
-        return alertRepository.deleteAll();
-    }
-
-
-    public saveOrUpdate(alert: Alert): Observable<Alert> {
-        return alertRepository.deleteByDSKey(alert.ds_key).pipe(
+    public addIfNotExists(alert: Alert): Observable<Alert> {
+        return alertRepository.findByDSKeyAndCode(alert.ds_key, alert.code).pipe(
+            filter(x => x.length === 0),
             mergeMap(() => alertRepository.add(alert))
         )
     }
 
-    public getAlert(dossier: DossierRecord): Alert {
+    public getAlerts(dossier: DossierRecord): Alert[] {
 
-        const alerts: string[] = [];
+        const alerts: Alert[] = [];
         if (isClosed(dossier)) {
-            this.addAlert(alerts, dossier, isDateDebutAPTNotPresent, 'Date de début APT manquante');
-            this.addAlert(alerts, dossier, isDateFinAPTNotPresent, 'Date de fin APT manquante');
-            this.addAlert(alerts, dossier, isFinAPTBeforeDebutAPT, 'Date de fin APT antérieure à Date de début APT');
-            this.addAlert(alerts, dossier, isAPTSup12Months, 'Durée APT supérieure à 12 mois');
-            this.addAlert(alerts, dossier, isMessageSentAfterProcessedAt, 'Message envoyé après acceptation du dossier');
+            this.addAlert(alerts, dossier, isDateDebutAPTNotPresent, alertTypes.closedWithoutDateDebut);
+            this.addAlert(alerts, dossier, isDateFinAPTNotPresent, alertTypes.closedWithoutDateFin);
+            this.addAlert(alerts, dossier, isFinAPTBeforeDebutAPT, alertTypes.closedWithDebutSupFin);
+            this.addAlert(alerts, dossier, isAPTSup12Months, alertTypes.closedWithSupOneYear);
+            this.addAlert(alerts, dossier, isMessageSentAfterProcessedAt, alertTypes.closedAndMessageReceived);
         } else if (isRefused(dossier)) {
-            this.addAlert(alerts, dossier, isMessageSentAfterProcessedAt, 'Message envoyé après refus du dossier');
+            this.addAlert(alerts, dossier, isMessageSentAfterProcessedAt, alertTypes.refusedAndMessageReceived);
         } else if (isWithoutContinuation(dossier)) {
-            this.addAlert(alerts, dossier, isMessageSentAfterProcessedAt, 'Message envoyé après le classement sans suite');
+            this.addAlert(alerts, dossier, isMessageSentAfterProcessedAt, alertTypes.withoutContinuationAndMessageReceived);
         } else if (isReceived(dossier)) {
-            this.addAlert(alerts, dossier, isReceivedTimeTooLong, 'Durée d\'instruction de dossier dépassée');
+            this.addAlert(alerts, dossier, isReceivedTimeTooLong, alertTypes.receivedAndDelayTooLong);
         } else if (isInitiated(dossier)) {
-            this.addAlert(alerts, dossier, isInitiatedTimeTooLong, 'Durée de construction de dossier dépassée');
+            this.addAlert(alerts, dossier, isInitiatedTimeTooLong, alertTypes.initiatedAndDelayTooLong);
         }
 
-        const alert: Alert = {
-            ds_key: dossier.ds_key,
-            url: getDemarcheSimplifieeUrl(dossier),
-            // tslint:disable-next-line: object-literal-sort-keys
-            group: dossier.metadata.group,
-            messages: alerts,
-            instructors_history: dossier.metadata.instructors_history
-        }
-        return alert;
+
+        return alerts;
     }
 
-    private addAlert(alerts: string[], dossier: DossierRecord, isAlert: (dossier: DossierRecord) => boolean, message: string) {
+    private addAlert(alerts: Alert[], dossier: DossierRecord, isAlert: (dossier: DossierRecord) => boolean, alertType: AlertType) {
         if (isAlert(dossier)) {
-            alerts.push(message);
+            const alert: Alert = {
+                ds_key: dossier.ds_key,
+                url: getDemarcheSimplifieeUrl(dossier),
+                // tslint:disable-next-line: object-literal-sort-keys
+                group: dossier.metadata.group,
+                message: alertType.message,
+                code: alertType.code,
+                instructors_history: dossier.metadata.instructors_history
+            }
+            alerts.push(alert);
         }
     }
 }

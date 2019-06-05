@@ -1,5 +1,4 @@
 import { Observable } from "rxjs";
-import { DeletedData } from "../lib";
 import { Alert } from "../model";
 import { KintoRepository } from "./kinto.repository";
 
@@ -17,13 +16,9 @@ class AlertRepository extends KintoRepository<Alert> {
         return this.collection.add(alert);
     }
 
-    public deleteByDSKey(dsKey: string): Observable<DeletedData[]> {
-        return this.collection.delete(`ds_key="${dsKey}"`);
+    public findByDSKeyAndCode(dsKey: string, code: number): Observable<Alert[]> {
+        return this.collection.search(`ds_key="${dsKey}"&code=${code}`);
     }
-    public deleteAll(): Observable<DeletedData[]> {
-        return this.collection.delete();
-    }
-
 }
 
 export const alertRepository = new AlertRepository();

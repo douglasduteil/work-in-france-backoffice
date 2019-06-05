@@ -22,13 +22,6 @@ router.post(`/${configuration.apiPrefix}/monthly-reports/sync-all`, (ctx: Koa.Co
     ctx.message = "[Monthly Reports] Global synchonisation launched"
 });
 
-// alerts - launch global alerts computation
-router.post(`/${configuration.apiPrefix}/alerts/sync-all`, (ctx: Koa.Context) => {
-    extractorService.launchGlobalAlertSynchro();
-    ctx.status = 200;
-    ctx.message = "[Alerts] Global synchonisation launched"
-});
-
 router.get(`/${configuration.apiPrefix}/monthly-reports/:year/:month/:group/download`, async (ctx: Koa.Context) => {
     const groupId = ctx.params.group;
     const year = ctx.params.year;
