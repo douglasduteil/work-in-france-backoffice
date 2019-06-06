@@ -20,6 +20,11 @@ pour lancer le projet en développement:
 *démarrer et configurer `kinto`*
 
 ```bash
+cd ./packages/kinto
+cp .env.sample .env
+```
+
+```bash
 # run kinto in docker
 yarn db:start
 
@@ -77,6 +82,23 @@ curl -X GET http://localhost:${.env.API_PORT}/api/${.env.API_PREFIX}/alerts/down
 |`alerts`           | dossiers en souffrance                                | `src/extractor/src/model/alert.model.ts`          |
 |`validity-checks`  | validité des APT                                      | `src/extractor/src/model/validity-check.model.ts` |
 |`synchro_histories`| stockage des informations de synchronisation          | `src/extractor/src/model/synchro-history.model.ts`|
+
+
+pour faire un dump
+
+```bash
+yarn db:dump
+
+# le fichier se trouve packages/kinto/scripts/dumps/dump_{TIMESTAMP}.yml
+```
+
+pour charger un dump
+
+```bash
+# DUMP_FILE_PATH: chemin relatif à partir de /packages/kinto/
+yarn db:load -- -- $DUMP_FILE_PATH
+
+```
 
 ## Synchronisation des données
 

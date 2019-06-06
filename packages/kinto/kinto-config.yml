@@ -1,0 +1,36 @@
+buckets:
+  wif_public:
+    collections:
+      alerts:
+        permissions:
+          write:
+          - /buckets/wif_public/groups/system
+          - account:admin
+      monthly_reports:
+        permissions:
+          write:
+          - /buckets/wif_public/groups/system
+          - account:admin
+      synchro_histories:
+        permissions:
+          write:
+          - /buckets/wif_public/groups/system
+          - account:admin
+      validity_checks:
+        permissions:
+          read:
+          - system.Everyone
+          write:
+          - /buckets/wif_public/groups/system
+          - account:admin
+    groups:
+      system:
+        data:
+          members:
+          - account:wif-bo
+        permissions:
+          write:
+          - account:admin
+    permissions:
+      write:
+      - account:admin

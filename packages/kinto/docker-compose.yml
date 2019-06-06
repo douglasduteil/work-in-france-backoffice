@@ -1,21 +1,24 @@
-db:
+wif-db:
   image: postgres
+  container_name: workinfrance-bo-db
   environment:
     POSTGRES_USER: postgres
     POSTGRES_PASSWORD: postgres
-cache:
+wif-cache:
   image: library/memcached
-web:
+  container_name: workinfrance-bo-cache
+wif-web:
   image: kinto/kinto-server
+  container_name: workinfrance-bo-kinto
   links:
-   - db
-   - cache
+   - wif-db
+   - wif-cache
   ports:
    - "8889:8888"
   environment:
     KINTO_CACHE_BACKEND: kinto.core.cache.memcached
-    KINTO_CACHE_HOSTS: cache:11211 cache:11212
+    KINTO_CACHE_HOSTS: wif-cache:11211 wif-cache:11212
     KINTO_STORAGE_BACKEND: kinto.core.storage.postgresql
-    KINTO_STORAGE_URL: postgresql://postgres:postgres@db/postgres
+    KINTO_STORAGE_URL: postgresql://postgres:postgres@wif-db/postgres
     KINTO_PERMISSION_BACKEND: kinto.core.permission.postgresql
-    KINTO_PERMISSION_URL: postgresql://postgres:postgres@db/postgres
+    KINTO_PERMISSION_URL: postgresql://postgres:postgres@wif-db/postgres
