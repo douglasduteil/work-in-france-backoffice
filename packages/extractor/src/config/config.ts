@@ -61,7 +61,7 @@ export const configuration = {
     mailPassword : asString(`MAIL_PASSWORD`),
     mailUseTLS: asBoolean(`MAIL_USE_TLS`),
 
-    sentrySilent: asBoolean('SENTRY_SILENT'),
+    sentryEnabled: asBoolean('SENTRY_ENABLED'),
     sentryDSN: asString('SENTRY_DSN')
     
 };
