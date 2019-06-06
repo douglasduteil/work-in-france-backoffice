@@ -1,16 +1,18 @@
-import { getMonth, getYear } from "date-fns";
 import { Observable } from "rxjs";
-import { flatMap, map, mergeMap } from "rxjs/operators";
+import { concatMap, flatMap, mergeMap } from "rxjs/operators";
 import { Stream } from "stream";
-import { DossierRecord, getDemarcheSimplifieeUrl, getNationality, isClosed, isLong, isRefused, isWithoutContinuation } from "../../model";
+import { DossierRecord, DSGroup, getDemarcheSimplifieeUrl, getNationality, isClosed, isLong, isRefused, isWithoutContinuation } from "../../model";
 import { initReport, MonthlyReport } from "../../model/monthly-report.model";
 import { monthlyReportRepository } from "../../repository";
 import { logger } from "../../util";
-import { dossierRecordService } from "../dossier-record.service";
+import { procedureConfigService } from "../dossier-record";
+import { dossierRecordService } from "../dossier-record/dossier-record.service";
 import { writeMonthlyReport } from "./monthly-report.excel";
 
 interface GroupReport {
-    title: string;
+    group: DSGroup;
+    year: number;
+    month: number;
     dossiers: DossierRecord[];
 }
 
@@ -32,7 +34,7 @@ class MonthlyReportService {
     public syncMonthlyReports(year: number, month: number): Observable<MonthlyReport> {
         return this.getReportGroups(year, month).pipe(
             mergeMap(groupReport => {
-                const report = buildReport(groupReport.dossiers);
+                const report = buildReport(groupReport);
                 return monthlyreportService.saveOrUpdate(report);
             })
         )
@@ -45,23 +47,19 @@ class MonthlyReportService {
     }
 
     private getReportGroups(year: number, month: number): Observable<GroupReport> {
-        return dossierRecordService.allByMonth(year, month).pipe(
-            map(groupByGroup),
-            map(splitGroups),
+        return procedureConfigService.all().pipe(
             flatMap(x => x),
-        );
+            concatMap(x => dossierRecordService.allByMonthAndGroupId(year, month, x.group.id),
+                (config, dossiers) => ({ group: config.group, year, month, dossiers })),
+        )
     }
 }
 
 export const monthlyreportService = new MonthlyReportService();
 
-const buildReport: (dossiers: DossierRecord[]) => MonthlyReport = (dossiers: DossierRecord[]) => {
-    const firstDossier = dossiers[0];
-    if (!firstDossier.metadata.processed_at) {
-        throw new Error(`[MonthlyReportService.buildReports] processed_at is not defined`);
-    }
-    const processedAt = new Date(firstDossier.metadata.processed_at);
-    const report = initReport(getYear(processedAt), getMonth(processedAt), firstDossier.metadata.group);
+const buildReport: (groupReport: GroupReport) => MonthlyReport = (groupReport: GroupReport) => {
+    const dossiers = groupReport.dossiers;
+    const report = initReport(groupReport.year, groupReport.month, groupReport.group);
     return dossiers.reduce((acc, dossier) => {
         try {
             return incrementReport(acc, dossier);
@@ -72,30 +70,6 @@ const buildReport: (dossiers: DossierRecord[]) => MonthlyReport = (dossiers: Dos
     }, report);
 }
 
-const groupByGroup = (dossiers: DossierRecord[]) => {
-    const dossiersByGroup = new Map<string, DossierRecord[]>();
-    return dossiers.reduce((acc: Map<string, DossierRecord[]>, dossier) => {
-        const groupId = dossier.metadata.group.id;
-        let group = acc.get(groupId);
-        if (!group) {
-            group = [];
-            acc.set(groupId, group);
-        }
-        group.push(dossier);
-        return acc;
-    }, dossiersByGroup);
-}
-
-const splitGroups = (groups: Map<string, DossierRecord[]>) => {
-    const result: GroupReport[] = [];
-    groups.forEach((dossiers: DossierRecord[], key: string) => {
-        result.push({
-            dossiers,
-            title: key
-        });
-    });
-    return result;
-}
 
 const determineCounter = (dossier: DossierRecord, report: MonthlyReport) => {
     if (isClosed(dossier)) {

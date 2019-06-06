@@ -1,7 +1,7 @@
 import { addMonths } from 'date-fns';
 import { Observable } from "rxjs";
-import { DossierRecord } from "../model";
-import { dossierRecordRepository } from "../repository";
+import { DossierRecord } from "../../model";
+import { dossierRecordRepository } from "../../repository";
 
 class DossierRecordService {
 
@@ -9,10 +9,10 @@ class DossierRecordService {
         return dossierRecordRepository.all();
     }
 
-    public allByMonth(year: number, month: number) {
+    public allByMonthAndGroupId(year: number, month: number, groupId: string) {
         const start = new Date(year, month, 1).getTime();
         const end = addMonths(start, 1).getTime();
-        return dossierRecordRepository.allByProcessedAtBetween(start, end);
+        return dossierRecordRepository.allByGroupIdAndProcessedAtBetween(groupId, start, end);
     }
 
     public allByStateAndProcessedAtBetween(state: string, start: number, end: number) {

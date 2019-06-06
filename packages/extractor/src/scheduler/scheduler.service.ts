@@ -12,6 +12,7 @@ export const handleScheduler = (cron: string, scheduler: string, process: (start
             logger.info(`[Scheduler] ${scheduler} is running...`);
             return;
         }
+        logger.info(`[Scheduler] ${scheduler} is starting...`);
         schedulerStates.set(scheduler, true);
         const endDate = new Date();
         const end = endDate.getTime();

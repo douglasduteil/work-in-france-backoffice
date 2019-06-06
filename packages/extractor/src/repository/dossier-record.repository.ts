@@ -18,8 +18,8 @@ class DossierRecordRepository {
         return this.collection.all();
     };
 
-    public allByProcessedAtBetween(start: number, end: number): Observable<DossierRecord[]> {
-        return this.collection.search(`gt_metadata.processed_at=${start}&lt_metadata.processed_at=${end}`);
+    public allByGroupIdAndProcessedAtBetween(groupId: string, start: number, end: number): Observable<DossierRecord[]> {
+        return this.collection.search(`metadata.group.id="${groupId}"&gt_metadata.processed_at=${start}&lt_metadata.processed_at=${end}`);
 
     }
 
