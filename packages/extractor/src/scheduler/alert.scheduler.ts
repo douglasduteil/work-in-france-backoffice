@@ -8,10 +8,16 @@ import { handleScheduler } from "./scheduler.service";
 export const alertScheduler = {
     start: () => {
         handleScheduler(configuration.alertCron, 'alert', (start: number, end: number) => {
-            return addAlerts(start, end).pipe(
+            return addAlerts(start, end);
+        });
+
+        handleScheduler(configuration.alertEmailCron, 'alert-email', () => {
+            return alertService.getAlertsToSend().pipe(
+                flatMap(x => x),
                 concatMap(alert => sendAlertByEmail(alert))
             );
         });
+
     }
 }
 

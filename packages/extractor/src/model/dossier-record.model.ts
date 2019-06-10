@@ -31,6 +31,7 @@ export interface DSDossier {
     champs_private: DSChamp[];
     commentaires: DSCommentaire[];
     instructeurs: string[];
+    email: string;
 }
 
 export interface DossierRecord extends IIdentifiable {

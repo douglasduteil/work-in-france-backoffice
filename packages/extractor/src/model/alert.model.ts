@@ -9,6 +9,8 @@ export interface Alert extends IIdentifiable {
     message: string;
     instructors_history: string[];
     email_id?: string;
+    email_user: string;
+    sent: boolean;
 }
 
 export interface AlertType {

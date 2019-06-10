@@ -26,6 +26,10 @@ class AlertRepository extends KintoRepository<Alert> {
     public findByDSKeyAndCode(dsKey: string, code: number): Observable<Alert[]> {
         return this.collection.search(`ds_key="${dsKey}"&code=${code}`);
     }
+
+    public findBySentIsFalse(): Observable<Alert[]> {
+        return this.collection.search(`sent=false`);
+    }
 }
 
 export const alertRepository = new AlertRepository();

@@ -16,6 +16,7 @@ class AlertService {
 
     public markAsSent(alert: Alert, messageId: string) {
         alert.email_id = messageId;
+        alert.sent = true;
         return alertRepository.update(alert);
     }
 
@@ -25,6 +26,10 @@ class AlertService {
             return;
         }
         await exportAlertsInExcel(alerts, stream);
+    }
+
+    public getAlertsToSend(): Observable<Alert[]> {
+        return alertRepository.findBySentIsFalse();
     }
 
     public addIfNotExists(alert: Alert): Observable<Alert> {
@@ -66,7 +71,9 @@ class AlertService {
                 group: dossier.metadata.group,
                 message: alertType.message,
                 code: alertType.code,
-                instructors_history: dossier.metadata.instructors_history
+                instructors_history: dossier.metadata.instructors_history,
+                email_user: dossier.ds_data.email,
+                sent: false
             }
             alerts.push(alert);
         }
