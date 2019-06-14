@@ -1,0 +1,57 @@
+---
+dist: xenial
+language: minimal
+git:
+  depth: 5
+
+#
+
+.node_stage: &node_stage
+  language: node_js
+  node_js: "10"
+  before_install:
+    - curl -o- -L https://yarnpkg.com/install.sh | bash
+    - export PATH="$HOME/.yarn/bin:$PATH"
+  install:
+    - yarn --frozen-lockfile
+
+.environments:
+  - &github_keys
+    - secure: "Zp76yFJIGFBRC4qFAGWNIyOHBSj8S/sKhAehLsYCTRPKWW4o30hg1jMhwp6XaWeyug9jRx+5CNevytr79p7XxRcKKWr1VQ4VWhg9mSSDeg0tNVZGNcu4z6kaDjfsEgHcYcNmgnJ4epo4Z8dZfJ4uCcD9mBrNcYGybiCAVFEok1LXXrUvgdUa/FgbPZGbMkG3EhR+8X7Z/8lLO/vkMpuYvpeTkrItck3PZxqjGIecTTvV/jfOB60SWRrlntTG0nDrtPCrHDHUy3rM43IFXMONzRlX9sqY8jv7yC4aImgLtnwg/Ii9hf+xoeL7+LpwIfG/+0GSBWnWR8pWSl7qgmRbsGZe32S/f0kIiAUaGaNpTzXyN07BP7mEIygLyCZETbBucafOlymb05ljsitXsYalogOuAHvkmkIeqTowTtqaVqnDUlSM9cRth31y0UIBeT3IIQr8kQhzFLVAKucWp4B1cP8gaC8jKsaI9dyPwN9ZvIoZsQCm7aWb7AGnVgg148byIXIK6QS9qen51YVTnRoPuJylABl6O6L6JV62o5aav8QUsV+UYKu/48wDkEI+y8oWfvEC+mdEZaOzUGm4lp4ucRCM/s+J3wtaPcyNG/SvOq4bX1+cgbP49UjxQkzvk2G9uzXbgwENEA9v4xCGewOt/PDyd/FTBTw/Qsalatpl8/o="
+
+#
+
+jobs:
+  include:
+    - <<: *node_stage
+      stage: Test
+      # if: type = pull_request
+      name: Test
+      script:
+        - yarn build --stream
+        #
+        - yarn lint --stream
+        #
+        - yarn run -- test --stream -- --coverage
+      after_script:
+        - npx codecov
+
+    - <<: *node_stage
+      stage: Release
+      if: env(RELEASE)
+      name: Make a new release 🎉
+      git:
+        # NOTE(douglasduteil): disable git --depth
+        # Try to have all the commits for the release Change Log
+        # see travis-ci/travis-ci#3412
+        depth: 9999999 # Over 9000 !
+      env:
+        - *github_keys
+      before_script:
+        - git checkout ${TRAVIS_BRANCH}
+        - git config user.name "Social Groovy Bot"
+        - git config user.email "45039513+SocialGroovyBot@users.noreply.github.com"
+        - git remote set-url origin https://${GITHUB_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git
+      script:
+        - GH_TOKEN=${GITHUB_TOKEN} yarn lerna version ${LERNA_ARGS:=--yes}
+        - yarn lerna publish from-git --yes
