@@ -1,17 +1,17 @@
 import { IIdentifiable } from "../util/persistence";
 
 export interface ValidityCheck extends IIdentifiable {
-    ds_key: string;
-    siret: string;
-    prenom: string;
-    nom: string;
-    date_de_naissance: string;
-    has_expired: boolean;
-    date_de_debut_apt: string;
-    date_de_fin_apt: string;
-    metadata: {
-        fin_apt: number;
-    }
+  ds_key: string;
+  siret: string;
+  prenom: string;
+  nom: string;
+  date_de_naissance: string;
+  has_expired: boolean;
+  date_de_debut_apt: string;
+  date_de_fin_apt: string;
+  metadata: {
+    fin_apt: number;
+  };
 }
 
 // "ds_id": 378335,

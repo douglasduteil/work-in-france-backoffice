@@ -1,14 +1,15 @@
-import { format } from 'logform';
-import { createLogger, transports } from 'winston';
-import SentryTransport from 'winston-sentry-node';
-import { configuration } from '../../config';
+import { format } from "logform";
+import { createLogger, transports } from "winston";
+import SentryTransport from "winston-sentry-node";
+import { configuration } from "../../config";
 
 const appendErrorInfo = (info: any, error: Error) => {
   return {
-    ...info, message: error.message,
+    ...info,
+    message: error.message,
     stack: error.stack
-  }
-}
+  };
+};
 
 const errorStackFormat = format((info: any) => {
   if (info instanceof Error) {
@@ -22,13 +23,12 @@ const errorStackFormat = format((info: any) => {
       }
     }
   }
-  return info
-})
-
+  return info;
+});
 
 const alignedWithColorsAndTime = format.combine(
   format.colorize(),
-  format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+  format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
   errorStackFormat(),
   format.printf((info: any) => {
     const { timestamp, level, message, stack, ...args } = info;
@@ -36,27 +36,31 @@ const alignedWithColorsAndTime = format.combine(
     if (stack) {
       return `${timestamp} ${level}: ${message}\n${stack}`;
     } else {
-      return `${timestamp} ${level}: ${message} ${Object.keys(args).length ? JSON.stringify(args, null, 2) : ''}`;
+      return `${timestamp} ${level}: ${message} ${
+        Object.keys(args).length ? JSON.stringify(args, null, 2) : ""
+      }`;
     }
-  }),
+  })
 );
 
 const logger = createLogger({
-  level: 'info',
+  level: "info",
   transports: [
     new transports.Console({
       format: alignedWithColorsAndTime,
       handleExceptions: true
-    }),
+    })
   ]
 });
 
 if (configuration.sentryEnabled) {
-  logger.add(new SentryTransport({
-    sentry: {
-      dsn: configuration.sentryDSN,
-    }
-  }))
+  logger.add(
+    new SentryTransport({
+      sentry: {
+        dsn: configuration.sentryDSN
+      }
+    })
+  );
 }
 
 export default logger;

@@ -1,1 +1,1 @@
-export * from './synchro-history.service';
+export * from "./synchro-history.service";

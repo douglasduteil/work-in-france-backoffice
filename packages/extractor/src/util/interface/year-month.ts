@@ -1,1 +1,4 @@
-export interface YearMonth { year: number, month: number };
+export interface YearMonth {
+  year: number;
+  month: number;
+}
