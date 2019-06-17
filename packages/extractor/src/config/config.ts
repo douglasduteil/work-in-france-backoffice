@@ -1,6 +1,6 @@
 import { config } from "dotenv";
 
-config();
+config({ path: "./../../.env" });
 
 const asString = (arg: any): string => {
   const res = process.env[arg];
@@ -31,9 +31,9 @@ export const configuration = {
   dsApiLogin: asString("DS_API_LOGIN"),
   dsApiPasssword: asString("DS_API_PASSWORD"),
 
-  kintoAPI: asString("KINTO_API"),
   kintoLogin: asString("KINTO_LOGIN"),
   kintoPassword: asString("KINTO_PASSWORD"),
+  kintoURL: asString("KINTO_URL"),
 
   apiPrefix: asString("API_PREFIX"),
   // tslint:disable-next-line: object-literal-sort-keys
