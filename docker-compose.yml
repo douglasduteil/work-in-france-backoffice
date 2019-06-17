@@ -9,7 +9,7 @@ services:
       dockerfile: ./packages/api/Dockerfile
     env_file: .env
     ports:
-      - 4000:4000
+      - 4001:4000
 
   db:
     image: postgres

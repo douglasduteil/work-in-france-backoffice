@@ -20,36 +20,15 @@ pour lancer le projet en développement:
 *démarrer et configurer `kinto`*
 
 ```bash
-cd ./packages/kinto
 cp .env.sample .env
 ```
 
 ```bash
-# run kinto in docker
-yarn db:start
-
-# configure kinto (launch only the first time)
-yarn db:init
+yarn start
 ```
 
 l'interface d'administation de kinto est accessible à l'adresse suivante `http://localhost:8889/v1/admin`:
 - Compte `admin`: admin / passw0rd
-- Compte `wif-bo`: wif-bo / W0rkInFranceND
-
-configurer `work-in-france-backoffice`
-
-```bash
-cd ./packages/extractor
-cp .env.sample .env
-```
-
-modifier les paramètres de `.env`
-
-lancer `extractor`
-
-```bash
-yarn dev
-```
 
 *appeler les API de `extractor`:
 
@@ -68,12 +47,16 @@ télécharger la liste des dossiers en souffrance sous le format `xlsx`
 curl -X GET http://localhost:${.env.API_PORT}/api/${.env.API_PREFIX}/alerts/download
 ```
 
+## Lancer en local avec docker
+
+```bash
+docker-compose up
+```
+
 ## Description
 
 ### kinto
 
-- deux comptes: `admin`, `wif-bo`
-- un groupe `system` dont `wif-bo` est membre
 - une bucket `wif_public` avec 4 collections:
 
 |Collection         |Description                                            | Modèle                                            |
@@ -84,22 +67,6 @@ curl -X GET http://localhost:${.env.API_PORT}/api/${.env.API_PREFIX}/alerts/down
 |`synchro_histories`| stockage des informations de synchronisation          | `src/extractor/src/model/synchro-history.model.ts`|
 
 
-pour faire un dump
-
-```bash
-yarn db:dump
-
-# le fichier se trouve packages/kinto/scripts/dumps/dump_{TIMESTAMP}.yml
-```
-
-pour charger un dump
-
-```bash
-# DUMP_FILE_PATH: chemin relatif à partir de /packages/kinto/
-yarn db:load -- -- $DUMP_FILE_PATH
-
-```
-
 ## Synchronisation des données
 
 La fréquence des synchronisations est paramétrable dans le `.env` en modifiant les expressions `cron`. A chaque synchronisation, 2 `timestamps` sont passés, celui de la dernière synchronisation et celui correspondant à la date courante. Cela permet de synchroniser uniquement le delta. Le `timestamp` de la dernière synchro est stocké dans la collection `synchro_histories`.
@@ -108,8 +75,6 @@ Liste des synchronisations:
 - Création des `validity-check`: crée les `validity-check`(expression `cron` `.env.VALIDITY_CHECK_CRON`)
 - Nettoyage des `validity-check`: supprime les `validity-check` expirés (expression `cron` `.env.VALIDITY_CHECK_CLEANER_CRON`)
 - Création des `monthly-report`: crée et envoie les rapports mensuels pour les DIRECCT (expression `cron` `.env.MONTHLY_REPORT_CRON`)
-
-
 
 
 ## Règles de détection d'une dossier potentiellement en souffrance
