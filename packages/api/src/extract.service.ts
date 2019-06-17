@@ -34,9 +34,7 @@ class ExtractorService {
           logger.error(`[monthly reports synchro] error: `, err),
         next: (next: MonthlyReport) =>
           logger.info(
-            `[monthly reports synchro] report ${next.year}-${next.month} ${
-              next.group.label
-            } synchronised `
+            `[monthly reports synchro] report ${next.year}-${next.month} ${next.group.label} synchronised `
           )
       });
   }

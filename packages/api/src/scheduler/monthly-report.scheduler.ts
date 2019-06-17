@@ -15,9 +15,7 @@ export const monthlyReportScheduler = {
         concatMap((report: MonthlyReport) => sendMonthlyReportEmail(report)),
         tap((res: { report: MonthlyReport; emailResponse: SentMessageInfo }) =>
           logger.info(
-            `[Monthly Report Email] success: ${res.report.group.id} - ${
-              res.emailResponse.messageId
-            }`
+            `[Monthly Report Email] success: ${res.report.group.id} - ${res.emailResponse.messageId}`
           )
         )
       );

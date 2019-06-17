@@ -37,9 +37,8 @@ class MonthlyReportService {
       .find(year, month, groupId)
       .toPromise();
     logger.info(
-      `[MonthlyReportService.writeMonthlyReport] ${
-        reports.length
-      } reports found for year: ${year}, month: ${month}, group: ${groupId}`
+      // tslint:disable-next-line: max-line-length
+      `[MonthlyReportService.writeMonthlyReport] ${reports.length} reports found for year: ${year}, month: ${month}, group: ${groupId}`
     );
     if (reports.length === 0) {
       return;
@@ -103,9 +102,7 @@ const buildReport: (groupReport: GroupReport) => MonthlyReport = (
       return incrementReport(acc, dossier);
     } catch (err) {
       logger.error(
-        `[MonthlyReportService.buildReport] error with dossier ${
-          dossier.ds_key
-        }`,
+        `[MonthlyReportService.buildReport] error with dossier ${dossier.ds_key}`,
         err
       );
       return acc;
@@ -124,9 +121,7 @@ const determineCounter = (dossier: DossierRecord, report: MonthlyReport) => {
     return report.withoutContinuation;
   }
   throw new Error(
-    `[MonthlyReportService.determineCounter] no counter found for dossier ${
-      dossier.ds_key
-    } ${dossier.metadata.state}`
+    `[MonthlyReportService.determineCounter] no counter found for dossier ${dossier.ds_key} ${dossier.metadata.state}`
   );
 };
 
