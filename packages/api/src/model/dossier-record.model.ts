@@ -70,7 +70,8 @@ const getPublicFieldValue = (record: DossierRecord, libelle: string) => {
     return getFieldValue(record.ds_data.champs, libelle);
   } catch (err) {
     logger.error(
-      `public field ${libelle} not find for dossier ${record.ds_key}`
+      `public field ${libelle} not find for dossier ${record.ds_key}`,
+      err
     );
     throw err;
   }
@@ -80,7 +81,8 @@ const getPrivateFieldValue = (record: DossierRecord, libelle: string) => {
     return getFieldValue(record.ds_data.champs_private, libelle);
   } catch (err) {
     logger.error(
-      `private field ${libelle} not find for dossier ${record.ds_key}`
+      `private field ${libelle} not find for dossier ${record.ds_key}`,
+      err
     );
     throw err;
   }
