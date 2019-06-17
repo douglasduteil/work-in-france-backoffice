@@ -47,13 +47,8 @@ export const configuration = {
   monthlyReportCron: asString("MONTHLY_REPORT_CRON"),
   monthlyReportEmailRecepient: asString("MONTHLY_REPORT_EMAIL_RECEPIENT"),
 
-  direcctDomainName: asString("DIRECCT_DN"),
-
   alertCron: asString(`ALERT_CRON`),
   alertEmailCron: asString(`ALERT_EMAIL_CRON`),
-  alertMaxReceivedTimeInDays: asNumber(`ALERT_MAX_RECEIVED_TIME_IN_DAYS`),
-  alertMaxInitiatedTimeInDays: asNumber(`ALERT_MAX_INITIATED_TIME_IN_DAYS`),
-  alertDemarcheSimplifieeEmail: asString(`ALERT_DEMARCHE_SIMPLIFIEE_EMAIL`),
 
   mailHost: asString(`MAIL_HOST`),
   mailPort: asNumber(`MAIL_PORT`),

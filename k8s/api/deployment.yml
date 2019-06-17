@@ -43,17 +43,25 @@ spec:
                 secretKeyRef:
                   name: wif-bo-secret
                   key: KINTO_PASSWORD
-            - name: DS_TOKEN
+            - name: DS_API
+              value: "http://kinto.ds-aggregator:8888/v1"
+            - name: DS_API_LOGIN
               valueFrom:
                 secretKeyRef:
                   name: wif-bo-secret
-                  key: DS_TOKEN
+                  key: DS_API_LOGIN
+            - name: DS_API_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: wif-bo-secret
+                  key: DS_API_PASSWORD
+
             - name: MAIL_USE_TLS
               value: "true"
             - name: MAIL_PORT
-              value: "465"
+              value: "587"
             - name: MAIL_FROM
-              value: "wif-bo <contact@wif-bo.beta.gouv.fr>"
+              value: "Work In France <contact@work-in-france.fr>"
             - name: MAIL_HOST
               valueFrom:
                 secretKeyRef:
@@ -69,6 +77,7 @@ spec:
                 secretKeyRef:
                   name: wif-bo-secret
                   key: MAIL_PASSWORD
+
             - name: SENTRY_ENABLED
               valueFrom:
                 secretKeyRef:
@@ -79,13 +88,31 @@ spec:
                 secretKeyRef:
                   name: wif-bo-secret
                   key: SENTRY_DSN
-            - name: SCHEDULER_CRON_TASK
+
+            - name: VALIDITY_CHECK_ENABLE
               valueFrom:
                 secretKeyRef:
                   name: wif-bo-secret
-                  key: SCHEDULER_CRON_TASK
-            - name: SCHEDULER_CRON_DS
+                  key: VALIDITY_CHECK_ENABLE
+            - name: VALIDITY_CHECK_CRON
               valueFrom:
                 secretKeyRef:
                   name: wif-bo-secret
-                  key: SCHEDULER_CRON_DS
+                  key: VALIDITY_CHECK_CRON
+            - name: VALIDITY_CHECK_CLEANER_CRON
+              valueFrom:
+                secretKeyRef:
+                  name: wif-bo-secret
+                  key: VALIDITY_CHECK_CLEANER_CRON
+
+            - name: MONTHLY_REPORT_CRON
+              valueFrom:
+                secretKeyRef:
+                  name: wif-bo-secret
+                  key: MONTHLY_REPORT_CRON
+            - name: MONTHLY_REPORT_EMAIL_RECEPIENT
+              valueFrom:
+                secretKeyRef:
+                  name: wif-bo-secret
+                  key: MONTHLY_REPORT_EMAIL_RECEPIENT
+

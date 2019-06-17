@@ -2,7 +2,6 @@ import { differenceInDays, differenceInMonths } from "date-fns";
 import { Observable } from "rxjs";
 import { filter, mergeMap } from "rxjs/operators";
 import { Stream } from "stream";
-import { configuration } from "../../config";
 import {
   DossierRecord,
   DSCommentaire,
@@ -21,9 +20,10 @@ import { Alert, AlertType, alertTypes } from "../../model/alert.model";
 import { alertRepository } from "../../repository/alert.repository";
 import { exportAlertsInExcel } from "./alert.excel";
 
-const dsContactEmail = configuration.alertDemarcheSimplifieeEmail;
-const maxReceivedTimeInDays = configuration.alertMaxReceivedTimeInDays;
-const maxInitiatedTimeInDays = configuration.alertMaxInitiatedTimeInDays;
+const dsContactEmail = "contact@demarches-simplifiees.fr";
+const maxReceivedTimeInDays = 3;
+const maxInitiatedTimeInDays = 3;
+const direcctDomainName = "direccte.gouv.fr";
 
 class AlertService {
   public markAsSent(alert: Alert, messageId: string) {
@@ -162,7 +162,7 @@ const lastMessageSentByStudentDate = (dossier: DossierRecord) => {
     return null;
   }
   const lastMessage = messages[messages.length - 1];
-  if (lastMessage.email.endsWith(configuration.direcctDomainName)) {
+  if (lastMessage.email.endsWith(direcctDomainName)) {
     return null;
   }
   return new Date(lastMessage.created_at);
