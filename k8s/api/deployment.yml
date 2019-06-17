@@ -59,7 +59,7 @@ spec:
             - name: MAIL_USE_TLS
               value: "true"
             - name: MAIL_PORT
-              value: "587"
+              value: "465"
             - name: MAIL_FROM
               value: "Work In France <contact@work-in-france.fr>"
             - name: MAIL_HOST
@@ -115,4 +115,15 @@ spec:
                 secretKeyRef:
                   name: wif-bo-secret
                   key: MONTHLY_REPORT_EMAIL_RECEPIENT
+
+            - name: ALERT_CRON
+              valueFrom:
+                secretKeyRef:
+                  name: wif-bo-secret
+                  key: ALERT_CRON
+            - name: ALERT_EMAIL_CRON
+              valueFrom:
+                secretKeyRef:
+                  name: wif-bo-secret
+                  key: ALERT_EMAIL_CRON
 
