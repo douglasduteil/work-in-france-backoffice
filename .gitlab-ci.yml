@@ -5,6 +5,8 @@ include:
   - "/k8s/memcached/.deploy-wif-bo-memcached.yml"
   - "/k8s/kinto/.deploy-wif-bo-kinto.yml"
 
+# 
+
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_HOST: tcp://localhost:2375
