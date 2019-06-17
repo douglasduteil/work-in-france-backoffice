@@ -6,7 +6,7 @@
     "license": "Apache-2.0",
     "private": true,
     "scripts": {
-        "dev": "nodemon --watch 'src/**/*' -e ts --exec ts-node src/server.ts",
+        "start": "nodemon --watch 'src/**/*' -e ts --exec ts-node src/server.ts",
         "build": "tsc",
         "lint": "tslint -p tsconfig.json -t stylish"
     },
