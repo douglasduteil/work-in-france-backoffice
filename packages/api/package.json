@@ -22,12 +22,12 @@
         "koa-router": "^7.4.0",
         "node-cron": "^2.0.3",
         "nodemailer": "^6.1.1",
+        "raven": "^2.6.4",
         "rxjs": "^6.5.2",
         "stream-buffers": "^3.0.2",
         "tmp": "^0.1.0",
         "typed-rest-client": "^1.4.0",
-        "winston": "^3.2.1",
-        "winston-sentry-node": "^0.0.4"
+        "winston": "^3.2.1"
     },
     "devDependencies": {
         "@socialgouv/tslint-config-recommended": "^0.9.0",
@@ -39,6 +39,7 @@
         "@types/node": "^12.0.0",
         "@types/node-cron": "^2.0.2",
         "@types/nodemailer": "^6.1.0",
+        "@types/raven": "^2.5.3",
         "@types/rx": "^4.1.1",
         "@types/stream-buffers": "^3.0.3",
         "@types/tmp": "^0.1.0",
