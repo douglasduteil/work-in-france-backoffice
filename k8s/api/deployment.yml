@@ -17,7 +17,7 @@ spec:
         app: wif-bo-api${HASH_BRANCH_NAME}
     spec:
       containers:
-        - image: ${DS_AGGREGATOR_REGISTRY}/api:${IMAGE_TAG}
+        - image: ${WIF_BO_REGISTRY}/api:${IMAGE_TAG}
           name: wif-bo-api
           ports:
             - containerPort: ${PORT}

@@ -11,7 +11,7 @@ spec:
   template:
     spec:
       containers:
-      - image: ${DS_AGGREGATOR_REGISTRY}/kinto:${IMAGE_TAG}
+      - image: ${WIF_BO_REGISTRY}/kinto:${IMAGE_TAG}
         name: wif-bo-init-kinto
         env:
         - name: KINTO_BASE_URL

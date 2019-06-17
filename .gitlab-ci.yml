@@ -118,7 +118,7 @@ Register init kinto image:
   stage: "Deploy"
   dependencies: []
   variables: &deploy_stage_variables
-    DS_AGGREGATOR_REGISTRY: $CI_REGISTRY_IMAGE
+    WIF_BO_REGISTRY: $CI_REGISTRY_IMAGE
     IMAGE_TAG: $CI_COMMIT_SHA
 #
 
