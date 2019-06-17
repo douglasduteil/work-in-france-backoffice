@@ -1,0 +1,32 @@
+---
+.deploy-wif-bo-kinto-k8s-dev:
+  image:
+    name: $CI_REGISTRY/$IMAGE_INFRA_BASE_NAME/docker-kube:latest
+    entrypoint: [""]
+  before_script:
+  - /apps/create-kubeconfig.sh
+  - HASH_BRANCH_NAME=$(printf "$CI_COMMIT_REF_NAME" | sha1sum | cut -c1-5)
+  - export HASH_BRANCH_NAME=-$HASH_BRANCH_NAME
+  - envsubst < k8s/kinto/deployment.yml > k8s/kinto/deployment-wif-bo.yml
+  - envsubst < k8s/kinto/service.yml > k8s/kinto/service-wif-bo.yml
+  - envsubst < k8s/kinto/job-init-kinto.yml > k8s/kinto/job-init-kinto-wif-bo.yml
+  script:
+  - kubectl apply -f k8s/kinto/deployment-wif-bo.yml
+  - kubectl apply -f k8s/kinto/service-wif-bo.yml
+  - k8s/scripts/init-kinto.sh $HASH_BRANCH_NAME
+  allow_failure: false
+
+.deploy-wif-bo-kinto-k8s-prod:
+  image:
+    name: $CI_REGISTRY/$IMAGE_INFRA_BASE_NAME/docker-kube:latest
+    entrypoint: [""]
+  before_script:
+  - /apps/create-kubeconfig.sh
+  - envsubst < k8s/kinto/deployment-prod.yml > k8s/kinto/deployment-prod-wif-bo.yml
+  - envsubst < k8s/kinto/service.yml > k8s/kinto/service-wif-bo.yml
+  - envsubst < k8s/kinto/job-init-kinto.yml > k8s/kinto/job-init-kinto-wif-bo.yml
+  script:
+  - kubectl apply -f k8s/kinto/deployment-prod-wif-bo.yml
+  - kubectl apply -f k8s/kinto/service-wif-bo.yml
+  - k8s/scripts/init-kinto.sh $HASH_BRANCH_NAME
+  allow_failure: false

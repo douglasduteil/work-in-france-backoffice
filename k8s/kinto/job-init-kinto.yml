@@ -1,0 +1,29 @@
+---
+kind: Job
+apiVersion: batch/v1
+metadata:
+  name: wif-bo-init-kinto${HASH_BRANCH_NAME}
+  labels:
+    app: wif-bo-init-kinto
+    branch: wif-bo${HASH_BRANCH_NAME}
+spec:
+  ttlSecondsAfterFinished: 100
+  template:
+    spec:
+      containers:
+      - image: ${DS_AGGREGATOR_REGISTRY}/kinto:${IMAGE_TAG}
+        name: wif-bo-init-kinto
+        env:
+        - name: KINTO_BASE_URL
+          value: "kinto${HASH_BRANCH_NAME}"
+        - name: KINTO_LOGIN
+          valueFrom:
+            secretKeyRef:
+              name: wif-bo-secret
+              key: KINTO_LOGIN
+        - name: KINTO_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: wif-bo-secret
+              key: KINTO_PASSWORD
+      restartPolicy: Never
